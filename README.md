@@ -9,7 +9,7 @@ urlFragment: "spring-petclinic-microservices"
 ---
 # Deploy Spring Microservices using Azure Spring Cloud and MySQL 
 
-Azure Spring Cloud enables you to easily run a Spring Boot based microservices application on Azure.
+Azure Spring Cloud enables you to easily run Spring Boot based microservices application on Azure.
 
 This quickstart shows you how to deploy an existing Java Spring Cloud application to Azure. When you're finished, you can continue to manage the application via the Azure CLI or switch to using the Azure portal.
 
@@ -20,6 +20,7 @@ You will:
 - Deploy applications to Azure
 - Bind applications to Azure Database for MySQL
 - Open the application
+- Monitor application using Application Insights or APMs of your choice - New Relic, App Dynamics or Dynatrace.
 
 ## What you will need
 
@@ -37,6 +38,7 @@ In addition, you will need the following:
 | [Maven](https://maven.apache.org/download.cgi) 
 | [MySQL CLI](https://dev.mysql.com/downloads/shell/)
 | [Git](https://git-scm.com/)
+| [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/create-new-resource) and or [New Relic](https://newrelic.com/signup/) 
 |
 
 ## Install the Azure CLI extension
@@ -88,6 +90,9 @@ Open `.scripts/setup-env-variables-azure.sh` and enter the following information
     ...
     export MYSQL_SERVER_ADMIN_PASSWORD=SuperS3cr3t # customize this
     ...
+    export APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=instrumentation-key # customize this
+    ...
+    export NEW_RELIC_LICENSE_KEY=license-key # customize this
 ```
 
 Then, set the environment:
@@ -147,26 +152,105 @@ Use the `application.yml` in the root of this project to load configuration into
 
 Create 5 microservice apps.
 
+Note - there is a known Azure Spring Cloud CLI bug, `--enable-persistent-storage true` does not enable persistent storage. Until that is fixed, you have to go to Azure Portal, open the Azure Spring Cloud instance that you create and go to apps blade and explicity enable persistent storage under `Configuration/Persistent Storage`. 
+
 ```bash
-    az spring-cloud app create --name ${API_GATEWAY} --instance-count 1 --is-public true \
+    az spring-cloud app create --name ${API_GATEWAY}-02 --instance-count 1 --is-public true \
         --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --jvm-options='-Xms2048m -Xmx2048m' \
+        --enable-persistent-storage true
     
     az spring-cloud app create --name ${ADMIN_SERVER} --instance-count 1 --is-public true \
         --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --jvm-options='-Xms2048m -Xmx2048m' \
+        --enable-persistent-storage true
     
-    az spring-cloud app create --name ${CUSTOMERS_SERVICE} --instance-count 1 \
+    az spring-cloud app create --name ${CUSTOMERS_SERVICE} --instance-count 1 --is-public true \
         --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --jvm-options='-Xms2048m -Xmx2048m' \
+        --enable-persistent-storage true
     
-    az spring-cloud app create --name ${VETS_SERVICE} --instance-count 1 \
+    az spring-cloud app create --name ${VETS_SERVICE} --instance-count 1 --is-public true \
         --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --jvm-options='-Xms2048m -Xmx2048m' \
+        --enable-persistent-storage true
     
-    az spring-cloud app create --name ${VISITS_SERVICE} --instance-count 1 \
+    az spring-cloud app create --name ${VISITS_SERVICE} --instance-count 1 --is-public true \
         --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --jvm-options='-Xms2048m -Xmx2048m' \
+        --enable-persistent-storage true
+```
+
+## Upload Application Performance Monitoring (APM) JARS
+
+### Download APM JARS
+Download [Application Insights JAR](https://docs.microsoft.com/en-us/azure/azure-monitor/app/java-in-process-agent) or New Relic JAR or both.
+
+```bash
+    # // Get Application Insights JAR
+    mkdir apm
+    cd apm
+    wget https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.0.0-PREVIEW.4/applicationinsights-agent-3.0.0-PREVIEW.4.jar
+    
+    # // Get New Relic JAR
+    curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+    unzip newrelic-java.zip 
+    cp newrelic/newrelic.jar .
+```
+
+### Upload APM JARS
+
+Deploy a simple Java app that provides a Web user interface for uploading APM JARS and upload them. Credits to [`callicoder`](https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example).
+
+```bash
+    az spring-cloud app deploy --name ${API_GATEWAY} \
+        --jar-path ${FILE_UPLOAD_JAR}
+    
+    az spring-cloud app show --name ${API_GATEWAY} | grep url
+```
+
+Open the API Gateway app using the URL provided by the previous command and upload APM JARs.
+
+![](media/spring-boot-file-upload.jpg)
+
+```bash
+   az spring-cloud app deploy --name ${ADMIN_SERVER} \
+           --jar-path ${FILE_UPLOAD_JAR}
+           
+   az spring-cloud app show --name ${ADMIN_SERVER} | grep url
+```
+    
+Open the Admin Server app using the URL provided by the previous command and upload APM JARs.
+
+```bash
+    az spring-cloud app deploy --name ${CUSTOMERS_SERVICE} \
+        --jar-path ${FILE_UPLOAD_JAR}
+            
+   az spring-cloud app show --name ${CUSTOMERS_SERVICE} | grep url
+```
+Open the Customers Service app using the URL provided by the previous command and upload APM JARs.
+
+```bash
+    az spring-cloud app deploy --name ${VETS_SERVICE} \
+            --jar-path ${FILE_UPLOAD_JAR}
+            
+   az spring-cloud app show --name ${VETS_SERVICE} | grep url
+```
+Open the Vets Service app using the URL provided by the previous command and upload APM JARs.   
+
+```bash
+    az spring-cloud app deploy --name ${VISITS_SERVICE} \
+            --jar-path ${FILE_UPLOAD_JAR}
+            
+   az spring-cloud app show --name ${VISITS_SERVICE} | grep url
+```
+Open the Visits Service app using the URL provided by the previous command and upload APM JARs.
+
+Disable public URIs for Customers, Vets and Visits service.
+```bash
+    az spring-cloud app update --name ${CUSTOMERS_SERVICE} --is-public false
+    az spring-cloud app update --name ${VETS_SERVICE} --is-public false
+    az spring-cloud app update --name ${VISITS_SERVICE} --is-public false
 ```
 
 ## Create MySQL Database
@@ -249,48 +333,74 @@ Deploy microservice applications to Azure.
 ```bash
     az spring-cloud app deploy --name ${API_GATEWAY} \
         --jar-path ${API_GATEWAY_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql'
-    
+        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql -javaagent:/persistent/apm/applicationinsights-agent-3.0.0-PREVIEW.4.jar -javaagent:/persistent/apm/newrelic.jar' \
+        --env APPLICATIONINSIGHTS_CONNECTION_STRING=${APPLICATIONINSIGHTS_CONNECTION_STRING} \
+              APPLICATIONINSIGHTS_ROLE_NAME=${API_GATEWAY} \
+              NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY} \
+              NEW_RELIC_APP_NAME=${API_GATEWAY}
     
     az spring-cloud app deploy --name ${ADMIN_SERVER} \
         --jar-path ${ADMIN_SERVER_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql'
-    
+        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql -javaagent:/persistent/apm/applicationinsights-agent-3.0.0-PREVIEW.4.jar -javaagent:/persistent/apm/newrelic.jar' \
+        --env APPLICATIONINSIGHTS_CONNECTION_STRING=${APPLICATIONINSIGHTS_CONNECTION_STRING} \
+              APPLICATIONINSIGHTS_ROLE_NAME=${ADMIN_SERVER} \
+              NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY} \
+              NEW_RELIC_APP_NAME=${ADMIN_SERVER}
     
     az spring-cloud app deploy --name ${CUSTOMERS_SERVICE} \
         --jar-path ${CUSTOMERS_SERVICE_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql' \
+        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql -javaagent:/persistent/apm/applicationinsights-agent-3.0.0-PREVIEW.4.jar -javaagent:/persistent/apm/newrelic.jar' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
               MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME} \
               MYSQL_SERVER_ADMIN_LOGIN_NAME=${MYSQL_SERVER_ADMIN_LOGIN_NAME} \
-              MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD}
-    
+              MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD} \
+              APPLICATIONINSIGHTS_CONNECTION_STRING=${APPLICATIONINSIGHTS_CONNECTION_STRING} \
+              APPLICATIONINSIGHTS_ROLE_NAME=${CUSTOMERS_SERVICE} \
+              NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY} \
+              NEW_RELIC_APP_NAME=${CUSTOMERS_SERVICE}
     
     az spring-cloud app deploy --name ${VETS_SERVICE} \
         --jar-path ${VETS_SERVICE_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql' \
+        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql -javaagent:/persistent/apm/applicationinsights-agent-3.0.0-PREVIEW.4.jar -javaagent:/persistent/apm/newrelic.jar' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
               MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME} \
               MYSQL_SERVER_ADMIN_LOGIN_NAME=${MYSQL_SERVER_ADMIN_LOGIN_NAME} \
-              MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD}
-              
+              MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD} \
+              APPLICATIONINSIGHTS_CONNECTION_STRING=${APPLICATIONINSIGHTS_CONNECTION_STRING} \
+              APPLICATIONINSIGHTS_ROLE_NAME=${VETS_SERVICE} \
+              NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY} \
+              NEW_RELIC_APP_NAME=${VETS_SERVICE}
     
     az spring-cloud app deploy --name ${VISITS_SERVICE} \
         --jar-path ${VISITS_SERVICE_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql' \
+        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql -javaagent:/persistent/apm/applicationinsights-agent-3.0.0-PREVIEW.4.jar -javaagent:/persistent/apm/newrelic.jar' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
               MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME} \
               MYSQL_SERVER_ADMIN_LOGIN_NAME=${MYSQL_SERVER_ADMIN_LOGIN_NAME} \
-              MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD}
+              MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD} \
+              APPLICATIONINSIGHTS_CONNECTION_STRING=${APPLICATIONINSIGHTS_CONNECTION_STRING} \
+              APPLICATIONINSIGHTS_ROLE_NAME=${VISITS_SERVICE} \
+              NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY} \
+              NEW_RELIC_APP_NAME=${VISITS_SERVICE}
 ```
 
 ```bash
-    az spring-cloud app show --name ${APP_NAME} | grep url
+    az spring-cloud app show --name ${API_GATEWAY} | grep url
 ```
 
 Navigate to the URL provided by the previous command to open the Pet Clinic microservice application.
     
 ![](./media/petclinic.jpg)
+
+## Monitor Spring Microservices using Application Insights or New Relic APMs
+
+Open Application Insights and navigate to `Application Map`:
+![](media/distributed-tracking-new-ai-agent.jpg)
+
+===
+
+Open New Relic and navigate to 'Service Maps':
+![](media/new-relic-screen-3-distributed-tracing.jpg)
 
 ## Next Steps
 

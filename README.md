@@ -460,7 +460,7 @@ Select one of the transaction, say `/owners(GET)`, you can see its breakdown:
 ![](media/new-relic-screen-6-break-down-of-get-owners-transaction.jpg)
 
 Open you iPhone New Relic app to monitor apps using your mobile:
-| ![](media/IMG_4965.PNG) | ![](media/IMG_4967.PNG) | ![](media/IMG_4970.PNG) | ![](media/IMG_4972.PNG) | 
+![](media/new-relic-iphone-app.JPG)
 
 ## Next Steps
 

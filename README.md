@@ -430,7 +430,7 @@ Navigate to 'Transactions' for `customers-service` app - you can see Web calls b
 ![](media/new-relic-screen-5-customers-service-transactions.jpg)
 
 Select a Web call `/owners(GET)` to learn more details:
-![](media/new-relic-screen-6-break-down-of-get-owners-transaction.jpg)
+![](media/new-relic-screen-9-break-down-of-sql-call.jpg)
 
 Navigate to `Databases` to identify SQL calls:
 ![](media/new-relic-screen-7-database-transactions.jpg)
@@ -460,7 +460,7 @@ Select one of the transaction, say `/owners(GET)`, you can see its breakdown:
 ![](media/new-relic-screen-6-break-down-of-get-owners-transaction.jpg)
 
 Open you iPhone New Relic app to monitor apps using your mobile:
-![](media/IMG_4965.PNG) ![](media/IMG_4967.PNG) ![](media/IMG_4970.PNG) ![](media/IMG_4972.PNG)
+| ![](media/IMG_4965.PNG) | ![](media/IMG_4967.PNG) | ![](media/IMG_4970.PNG) | ![](media/IMG_4972.PNG) | 
 
 ## Next Steps
 

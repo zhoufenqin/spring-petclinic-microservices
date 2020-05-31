@@ -397,7 +397,22 @@ Navigate to the URL provided by the previous command to open the Pet Clinic micr
 Open Application Insights and navigate to `Application Map`:
 ![](media/distributed-tracking-new-ai-agent.jpg)
 
-===
+Navigate to `Performance`:
+![](media/petclinic-microservices-performance.jpg)
+
+Navigate to 'Performance/Dependenices' - you can see the performance number for dependencies:
+![](media/petclinic-microservices-performance-dependencies.jpg)
+
+Navigate to 'Failures/Exceptions' - you can see a collection of exceptions:
+![](media/petclinic-microservices-failures-exceptions.jpg)
+
+Click on an exception to see the end-to-end transaction and stacktrace in context:
+![](media/end-to-end-transaction-details.jpg)
+
+Navigate to 'Metrics' - you can see metrics contributed by Spring Boot apps, Spring Cloud modules, dependencies and custome metrics published by your code. The chart below shows `gateway-requests` (Spring Cloud Gateway), `hikaricp_connections` (JDBC Connections) and `http_client_requests`.
+![](media/petclinic-microservices-metrics.jpg)
+
+---
 
 Open New Relic and navigate to 'Service Maps':
 ![](media/new-relic-screen-3-distributed-tracing.jpg)

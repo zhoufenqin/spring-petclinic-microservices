@@ -200,7 +200,7 @@ Download [Application Insights JAR](https://docs.microsoft.com/en-us/azure/azure
 
 ### Upload APM JARS
 
-Deploy a simple Java app that provides a Web user interface for uploading APM JARS and upload them. Credits to [`callicoder`](https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example).
+Deploy a simple Java app that provides a Web user interface for uploading APM JARS and upload them. Credits to [`callicoder`](https://github.com/selvasingh/spring-boot-file-upload-download-rest-api-example).
 
 ```bash
     az spring-cloud app deploy --name ${API_GATEWAY} \

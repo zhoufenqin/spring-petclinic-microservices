@@ -152,7 +152,7 @@ Use the `application.yml` in the root of this project to load configuration into
 
 Create 5 microservice apps.
 
-Note - there is a known Azure Spring Cloud CLI bug, `--enable-persistent-storage true` does not enable persistent storage. Until that is fixed, you have to go to Azure Portal, open the Azure Spring Cloud instance that you create and go to apps blade and explicity enable persistent storage under `Configuration/Persistent Storage`. 
+Note - there is a known Azure Spring Cloud CLI bug, `--enable-persistent-storage true` does not enable persistent storage. Until that is fixed, you have to go to the Azure Portal, open the Azure Spring Cloud instance that you created, go to the Apps blade and explicity enable persistent storage under `Configuration/Persistent Storage`. 
 
 ```bash
     az spring-cloud app create --name ${API_GATEWAY}-02 --instance-count 1 --is-public true \

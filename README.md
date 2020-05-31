@@ -400,22 +400,67 @@ Open Application Insights and navigate to `Application Map`:
 Navigate to `Performance`:
 ![](media/petclinic-microservices-performance.jpg)
 
-Navigate to 'Performance/Dependenices' - you can see the performance number for dependencies:
+Navigate to `Performance/Dependenices` - you can see the performance number for dependencies:
 ![](media/petclinic-microservices-performance-dependencies.jpg)
 
-Navigate to 'Failures/Exceptions' - you can see a collection of exceptions:
+Navigate to `Failures/Exceptions` - you can see a collection of exceptions:
 ![](media/petclinic-microservices-failures-exceptions.jpg)
 
 Click on an exception to see the end-to-end transaction and stacktrace in context:
 ![](media/end-to-end-transaction-details.jpg)
 
-Navigate to 'Metrics' - you can see metrics contributed by Spring Boot apps, Spring Cloud modules, dependencies and custome metrics published by your code. The chart below shows `gateway-requests` (Spring Cloud Gateway), `hikaricp_connections` (JDBC Connections) and `http_client_requests`.
+Navigate to `Metrics` - you can see metrics contributed by Spring Boot apps, Spring Cloud modules, dependencies and custome metrics published by your code. The chart below shows `gateway-requests` (Spring Cloud Gateway), `hikaricp_connections` (JDBC Connections) and `http_client_requests`.
 ![](media/petclinic-microservices-metrics.jpg)
+
+Navigate to `Live Metrics` - you can see live metrics on screen with low latencies < 60 seconds:
+![](media/petclinic-microservices-live-metrics.jpg)
 
 ---
 
 Open New Relic and navigate to 'Service Maps':
 ![](media/new-relic-screen-3-distributed-tracing.jpg)
+
+Open `api-gateway` app - you can see `Web transactions time`, `Apdex score`, `Throughput` and `Transactions`:
+![](media/new-relic-screen-1-app-gateway.jpg)
+
+Open `customers-service` app - you can see `Web transactions time`, `Apdex score`, `Throughput` and `Transactions`:
+![](media/new-relic-screen-4-customers-service.jpg)
+
+Navigate to 'Transactions' for `customers-service` app - you can see Web calls by wall clock and `Throughput`:
+![](media/new-relic-screen-5-customers-service-transactions.jpg)
+
+Select a Web call `/owners(GET)` to learn more details:
+![](media/new-relic-screen-6-break-down-of-get-owners-transaction.jpg)
+
+Navigate to `Databases` to identify SQL calls:
+![](media/new-relic-screen-7-database-transactions.jpg)
+
+`SORT BY` - `Slowest query time` to rank calls by query time:
+![](media/new-relic-screen-8-database-slow-queries.jpg)
+
+Click `Show all database operations table...` to find all SQL calls:
+![](media/new-relic-screen-9-list-of-database-operations.jpg)
+
+Navigate to `JVMs` - you can see JVM metrics:
+![](media/new-relic-screen-10-jvms.jpg)
+
+Navigate to `Error analytics` - you can see exceptions thrown by app code:
+![](media/new-relic-screen-11-error-analytics.jpg)
+
+Select one of the errors on the bottom right - you can see more details about the exception or error:
+![](media/new-relic-screen-13-error-stacktrace.jpg)
+
+Navigate to `Reports - SLA` - you can daily SLA:
+![](media/new-relic-screen-13-your-slas.jpg)
+
+Navigate to `Reports - Web transactions` - you can see a summary of transactions:
+![](media/new-relic-screen-15-web-transactions-report.jpg)
+
+Select one of the transaction, say `/owners(GET)`, you can see its breakdown:
+![](media/new-relic-screen-6-break-down-of-get-owners-transaction.jpg)
+
+Open you iPhone New Relic app to monitor apps using your mobile:
+![](media/IMG_4965.PNG) ![](media/IMG_4967.PNG) ![](media/IMG_4970.PNG) ![](media/IMG_4972.PNG)
 
 ## Next Steps
 

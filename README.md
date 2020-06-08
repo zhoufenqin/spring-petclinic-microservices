@@ -19,7 +19,7 @@ This quickstart shows you how to deploy an existing Java Spring Cloud applicatio
 ## What will you experience
 You will:
 - Build existing Spring microservices applications
-- Provision an Azure Spring Cloud service instance. If you prefer Terraform, you may also provision using Terraform, see [`azure-terraform branch`](https://github.com/Azure-Samples/spring-petclinic-microservices/tree/azure-terraform)
+- Provision an Azure Spring Cloud service instance. If you prefer Terraform, you may also provision using Terraform, see [`README-terraform`](./terraform/README-terraform.md)
 - Deploy applications to Azure
 - Bind applications to Azure Database for MySQL
 - Open the application

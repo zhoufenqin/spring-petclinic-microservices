@@ -8,13 +8,16 @@ description: "Deploy Spring microservices using Azure Spring Cloud and MySQL"
 urlFragment: "spring-petclinic-microservices"
 ---
 
-# Deploy Spring Microservices using Azure Spring Cloud and MySQL 
+# Deploy Spring Boot applications - using Azure Spring Cloud Enterprise and MySQL 
 
 Azure Spring Cloud enables you to easily run a Spring Boot based microservices application on Azure.
 
-This quickstart shows you how to deploy an existing Java Spring Cloud application to Azure. When 
+This quickstart shows you how to deploy an existing Java Spring Boot applications to Azure. When 
 you're finished, you can continue to manage the application via the Azure CLI or switch to using the 
 Azure Portal.
+
+Note -  if you would like to deploy the same application to Azure Spring Cloud Standard, please go the
+['azure' branch](https://github.com/Azure-Samples/spring-petclinic-microservices).
 
 * [Deploy Spring Microservices using Azure Spring Cloud and MySQL](#deploy-spring-microservices-using-azure-spring-cloud-and-mysql)
   * [What will you experience](#what-will-you-experience)
@@ -26,20 +29,16 @@ Azure Portal.
   * [Create MySQL Database](#create-mysql-database)
   * [DEPLOY applications and set environment variables](#deploy-applications-and-set-environment-variables)
   * [MONITOR microservice applications](#monitor-microservice-applications)
-  * [AUTOMATE deployments using GitHub Actions](#automate-deployments-using-github-actions)
-  * [Manage application secrets using Azure KeyVault](#manage-application-secrets-using-azure-keyvault)
   * [Next Steps](#next-steps)
 
 ## What will you experience
 You will:
 - Build existing Spring microservices applications
-- Provision an Azure Spring Cloud service instance. If you prefer Terraform, you may also provision using Terraform, see [`README-terraform`](./terraform/README-terraform.md)
+- Provision an Azure Spring Cloud Enterprise service instance
 - Deploy applications to Azure
 - Bind applications to Azure Database for MySQL
 - Open the application
 - Monitor applications
-- Automate deployments using GitHub Actions
-- Manage application secrets using Azure KeyVault
 
 ## What you will need
 
@@ -61,17 +60,11 @@ In addition, you will need the following:
 
 ## Install the Azure CLI extension
 
-Install the Azure Spring Cloud extension for the Azure CLI using the following command
+Install the Azure Spring Cloud "Enterprise" extension for the Azure CLI using the following command
 
 ```bash
-    az extension add --name spring-cloud
-```
-Note - `spring-cloud` CLI extension `2.1.0` or later is a pre-requisite to enable the
-latest Java in-process agent for Application Insights. If you already 
-have the CLI extension, you may need to upgrade to the latest using --
-
-```bash
-    az extension update --name spring-cloud
+    az extension remove -n spring-cloud
+    az extension add -s https://ascprivatecli.blob.core.windows.net/enterprise/spring_cloud-2.7.0a1-py3-none-any.whl -y
 ```
 
 ## Clone and build the repo
@@ -131,8 +124,16 @@ Login to the Azure CLI and choose your active subscription. Be sure to choose th
     az account set --subscription ${SUBSCRIPTION}
 ```
 
-### Create Azure Spring Cloud service instance
-Prepare a name for your Azure Spring Cloud service.  The name must be between 4 and 32 characters long and can contain only lowercase letters, numbers, and hyphens.  The first character of the service name must be a letter and the last character must be either a letter or a number.
+### Create Azure Spring Cloud Enterprise service instance
+
+Your subscription must be whitelisted to participate in Azure Spring Cloud Enterprise Private Preview.
+If your subscription is not already whitelisted, sign up for the preview at 
+[aka.ms/spring-cloud-enterprise](https://aka.ms/spring-cloud-enterprise) by clicking **Contact Me**.
+
+Prepare a name for your Azure Spring Cloud service. The name must be between 4 and 32 
+characters long and can contain only lowercase letters, numbers, and hyphens. 
+The first character of the service name must be a letter and the last character must 
+be either a letter or a number.
 
 Create a resource group to contain your Azure Spring Cloud service.
 
@@ -141,16 +142,50 @@ Create a resource group to contain your Azure Spring Cloud service.
         --location ${REGION}
 ```
 
-Create an instance of Azure Spring Cloud.
+Create an instance of Azure Spring Cloud using Azure Portal.
 
-```bash
-    az spring-cloud create --name ${SPRING_CLOUD_SERVICE} \
-        --sku standard --enable-java-agent \
-        --resource-group ${RESOURCE_GROUP} \
-        --location ${REGION}
-```
+1. **Open** Azure Portal - [https://ms.portal.azure.com/?AppPlatformExtension=enterprise#create/Microsoft.AppPlatform](https://ms.portal.azure.com/?AppPlatformExtension=enterprise#create/Microsoft.AppPlatform)
 
-The service instance will take around five minutes to deploy.
+2. In the pricing option, click **Change** and choose **Enterprise**
+
+![](./media/create-azure-spring-cloud-enterprise-tier.jpg)
+
+3. Check **Terms** checkbox to agree with legal terms and privacy statements of the Azure Spring Cloud
+Enterprise tier offering in Azure Marketplace
+
+![](./media/agree-to-terms.jpg)
+
+4. Click **Next: VMware Tanzu settings>** button at the bottom right of the page to 
+configure VMware Tanzu components
+
+    > **NOTE**
+    >
+    > By default, Tanzu Service Registry and Tanzu Application Configuration Service are enabled. 
+    Accept the defaults
+
+![](./media/create-azure-spring-cloud-enterprise-tier-vmware-tanzu-ala-carte.jpg)
+
+5. Click **Next: Diagnostic settings>** button at the bottom right 
+of the page to configure Azure Monitor and Log Analytics. Choose an existing Log Analytics or 
+create a new one
+
+![](./media/azure-spring-cloud-enterprise-tier-setup-diagnostics.jpg)
+
+6. Click **Next: Application Insights >** button at the bottom right of the page to configure
+Application Insights. Choose an existing Application Insights or create a new one 
+and set sampling rate, say 50.
+
+![](./media/azure-spring-cloud-enterprise-tier-setup-application-insights.jpg)
+
+7.Click **Review and create** button at the bottom left of the page. After validation is successfully 
+completed, click **Create** button to start provisioning an Azure Spring Cloud Enterprise service 
+instance. It takes about 5 minutes to provision
+
+![](./media/create-azure-spring-cloud-enterprise-tier-validated.jpg)
+
+8. Upon completion, go to the resource
+
+![](./media/azure-spring-cloud-enterprise-tier.jpg)
 
 Set your default resource group name and cluster name using the following commands:
 
@@ -161,14 +196,16 @@ Set your default resource group name and cluster name using the following comman
         spring-cloud=${SPRING_CLOUD_SERVICE}
 ```
 
-### Load Spring Cloud Config Server
+### Load Tanzu Application Configuration Service
 
-Use the `application.yml` in the root of this project to load configuration into the Config Server in Azure Spring Cloud.
+Use the `application.yml` in the root of this project to load configuration into the 
+Tanzu Application Configuration Service in Azure Spring Cloud.
 
 ```bash
-    az spring-cloud config-server set \
-        --config-file application.yml \
-        --name ${SPRING_CLOUD_SERVICE}
+    az spring-cloud application-configuration-service \
+        git repo add --label master --name petclinic \
+        --patterns "api-gateway,customers-service/mysql,vets-service/mysql,visits-service/mysql,admin-server" \
+        --uri "https://github.com/Azure-Samples/spring-petclinic-microservices-config"
 ```
 
 ## Create microservice applications
@@ -176,25 +213,38 @@ Use the `application.yml` in the root of this project to load configuration into
 Create 5 microservice apps.
 
 ```bash
-    az spring-cloud app create --name ${API_GATEWAY} --instance-count 1 --is-public true \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+    az spring-cloud app create --name ${API_GATEWAY} --instance-count 1 --assign-endpoint \
+        --memory 2Gi
     
-    az spring-cloud app create --name ${ADMIN_SERVER} --instance-count 1 --is-public true \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+    az spring-cloud app create --name ${ADMIN_SERVER} --instance-count 1 --assign-endpoint \
+        --memory 2Gi
     
     az spring-cloud app create --name ${CUSTOMERS_SERVICE} --instance-count 1 \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --memory 2Gi 
     
     az spring-cloud app create --name ${VETS_SERVICE} --instance-count 1 \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --memory 2Gi
     
     az spring-cloud app create --name ${VISITS_SERVICE} --instance-count 1 \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m'
+        --memory 2Gi
+```
+
+## Bind applications to Tanzu Application Configuration Service and Tanzu Service Registry
+
+Bind all your applications to Tanzu Application Configuration Service and Tanzu Service Registry.
+
+```bash
+    az spring-cloud application-configuration-service bind --app ${API_GATEWAY}
+    az spring-cloud application-configuration-service bind --app ${ADMIN_SERVER}
+    az spring-cloud application-configuration-service bind --app ${CUSTOMERS_SERVICE}
+    az spring-cloud application-configuration-service bind --app ${VETS_SERVICE}
+    az spring-cloud application-configuration-service bind --app ${VISITS_SERVICE}
+    
+    az spring-cloud service-registry bind --app ${API_GATEWAY}
+    az spring-cloud service-registry bind --app ${ADMIN_SERVER}
+    az spring-cloud service-registry bind --app ${CUSTOMERS_SERVICE}
+    az spring-cloud service-registry bind --app ${VETS_SERVICE}
+    az spring-cloud service-registry bind --app ${VISITS_SERVICE}
 ```
 
 ## Create MySQL Database
@@ -275,37 +325,35 @@ Create a MySQL database in Azure Database for MySQL.
 Deploy microservice applications to Azure.
 
 ```bash
-    az spring-cloud app deploy --name ${API_GATEWAY} \
-        --jar-path ${API_GATEWAY_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql'
+    az spring-cloud app deploy --name ${API_GATEWAY} --config-file-patterns ${API_GATEWAY} \
+        --jar-path ${API_GATEWAY_JAR}
     
     
-    az spring-cloud app deploy --name ${ADMIN_SERVER} \
-        --jar-path ${ADMIN_SERVER_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql'
+    az spring-cloud app deploy --name ${ADMIN_SERVER} --config-file-patterns ${ADMIN_SERVER} \
+        --jar-path ${ADMIN_SERVER_JAR} 
     
     
-    az spring-cloud app deploy --name ${CUSTOMERS_SERVICE} \
+    az spring-cloud app deploy --name ${CUSTOMERS_SERVICE} --config-file-patterns ${CUSTOMERS_SERVICE}/mysql \
         --jar-path ${CUSTOMERS_SERVICE_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql' \
+        --jvm-options='-Dspring.profiles.active=mysql' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
               MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME} \
               MYSQL_SERVER_ADMIN_LOGIN_NAME=${MYSQL_SERVER_ADMIN_LOGIN_NAME} \
               MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD}
     
     
-    az spring-cloud app deploy --name ${VETS_SERVICE} \
+    az spring-cloud app deploy --name ${VETS_SERVICE} --config-file-patterns ${VETS_SERVICE}/mysql  \
         --jar-path ${VETS_SERVICE_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql' \
+        --jvm-options='-Dspring.profiles.active=mysql' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
               MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME} \
               MYSQL_SERVER_ADMIN_LOGIN_NAME=${MYSQL_SERVER_ADMIN_LOGIN_NAME} \
               MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD}
               
     
-    az spring-cloud app deploy --name ${VISITS_SERVICE} \
+    az spring-cloud app deploy --name ${VISITS_SERVICE} --config-file-patterns ${VISITS_SERVICE}/mysql \
         --jar-path ${VISITS_SERVICE_JAR} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql' \
+        --jvm-options='-Dspring.profiles.active=mysql' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
               MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME} \
               MYSQL_SERVER_ADMIN_LOGIN_NAME=${MYSQL_SERVER_ADMIN_LOGIN_NAME} \
@@ -370,151 +418,12 @@ the availability of applications:
 Navigate to the `Live Metrics` blade - you can see live metrics on screen with low latencies < 1 second:
 ![](./media/petclinic-microservices-live-metrics.jpg)
 
-## Automate deployments using GitHub Actions
-
-### Prepare secrets in your Key Vault
-If you do not have a Key Vault yet, run the following commands to provision a Key Vault:
-```bash
-    export KEY_VAULT=your-keyvault-name # customize this
-    az keyvault create --name ${KEY_VAULT} -g ${RESOURCE_GROUP}
-```
-
-Add the MySQL secrets to your Key Vault:
-```bash
-    az keyvault secret set --vault-name ${KEY_VAULT} --name "MYSQL-SERVER-FULL-NAME" --value ${MYSQL_SERVER_FULL_NAME}
-    az keyvault secret set --vault-name ${KEY_VAULT} --name "MYSQL-DATABASE-NAME" --value ${MYSQL_DATABASE_NAME}
-    az keyvault secret set --vault-name ${KEY_VAULT} --name "MYSQL-SERVER-ADMIN-LOGIN-NAME" --value ${MYSQL_SERVER_ADMIN_LOGIN_NAME}
-    az keyvault secret set --vault-name ${KEY_VAULT} --name "MYSQL-SERVER-ADMIN-PASSWORD" --value ${MYSQL_SERVER_ADMIN_PASSWORD}
-```
-
-Create a service principal with enough scope/role to manage your Azure Spring Cloud instance:
-```bash
-    az ad sp create-for-rbac --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID> --sdk-auth
-```
-With results:
-```json
-    {
-        "clientId": "<GUID>",
-        "clientSecret": "<GUID>",
-        "subscriptionId": "<GUID>",
-        "tenantId": "<GUID>",
-        "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
-        "resourceManagerEndpointUrl": "https://management.azure.com/",
-        "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
-        "galleryEndpointUrl": "https://gallery.azure.com/",
-        "managementEndpointUrl": "https://management.core.windows.net/"
-    }
-```
-Add them as secrets to your Key Vault:
-```bash
-    az keyvault secret set --vault-name ${KEY_VAULT} --name "AZURE-CREDENTIALS-FOR-SPRING" --value "<results above>"
-```
-
-### Grant access to Key Vault with Service Principal
-To generate a key to access the Key Vault, execute command below:
-```bash
-    az ad sp create-for-rbac --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.KeyVault/vaults/<KEY_VAULT> --sdk-auth
-```
-Then, follow [the steps here](https://docs.microsoft.com/azure/spring-cloud/spring-cloud-github-actions-key-vault#add-access-policies-for-the-credential) to add access policy for the Service Principal.
-
-In the end, add this service principal as secrets named "AZURE_CREDENTIALS" in your forked GitHub repo following [the steps here](https://docs.microsoft.com/en-us/azure/spring-cloud/spring-cloud-github-actions-key-vault#add-access-policies-for-the-credential).
-
-### Customize your workflow
-Finally, edit the workfolw file `.github/workflows/action.yml` in your forked repo to fill in the names of resource group and the Azure Spring Cloud instance name that you just created:
-```yml
-    env:
-      RESOURCE_GROUP: resource-group-name # customize this
-      SPRING_CLOUD_SERVICE: azure-spring-cloud-name # customize this
-```
-After you commited this change, you will see GitHub Actions triggered to build and deploy all the apps in the repo to your Azure Spring Cloud instance.
-![](./media/automate-deployments-using-github-actions.jpg)
-
-## Manage application secrets using Azure KeyVault
-
-Use Azure Key Vault to store and load secrets to connect to MySQL database.
-
-### Create Azure Key Vault and store secrets
-
-If you skipped the [Automation step](#automate-deployments-using-github-actions), create an Azure Key Vault and store database connection secrets.
-
-```bash
-    az keyvault create --name ${KEY_VAULT} -g ${RESOURCE_GROUP}
-    export KEY_VAULT_URI=$(az keyvault show --name ${KEY_VAULT} | jq -r '.properties.vaultUri')
-```
-
-Store database connection secrets in Key Vault.
-
-```bash
-    az keyvault secret set --vault-name ${KEY_VAULT} \
-        --name "MYSQL-SERVER-FULL-NAME" --value ${MYSQL_SERVER_FULL_NAME}
-        
-    az keyvault secret set --vault-name ${KEY_VAULT} \
-        --name "MYSQL-DATABASE-NAME" --value ${MYSQL_DATABASE_NAME}
-        
-    az keyvault secret set --vault-name ${KEY_VAULT} \
-        --name "MYSQL-SERVER-ADMIN-LOGIN-NAME" --value ${MYSQL_SERVER_ADMIN_LOGIN_NAME}
-        
-    az keyvault secret set --vault-name ${KEY_VAULT} \
-        --name "MYSQL-SERVER-ADMIN-PASSWORD" --value ${MYSQL_SERVER_ADMIN_PASSWORD}
-```                      
-
-### Enable Managed Identities for applications in Azure Spring Cloud
-
-Enable System Assigned Identities for applications and export identities to environment.
-
-```bash
-    az spring-cloud app identity assign --name ${CUSTOMERS_SERVICE}
-    export CUSTOMERS_SERVICE_IDENTITY=$(az spring-cloud app show --name ${CUSTOMERS_SERVICE} | jq -r '.identity.principalId')
-    
-    az spring-cloud app identity assign --name ${VETS_SERVICE}
-    export VETS_SERVICE_IDENTITY=$(az spring-cloud app show --name ${VETS_SERVICE} | jq -r '.identity.principalId')
-    
-    az spring-cloud app identity assign --name ${VISITS_SERVICE}
-    export VISITS_SERVICE_IDENTITY=$(az spring-cloud app show --name ${VISITS_SERVICE} | jq -r '.identity.principalId')
-```
-
-### Grant Managed Identities with access to Azure Key Vault
-
-Add an access policy to Azure Key Vault to allow Managed Identities to read secrets.
-
-```bash
-    az keyvault set-policy --name ${KEY_VAULT} \
-        --object-id ${CUSTOMERS_SERVICE_IDENTITY} --secret-permissions get list
-        
-    az keyvault set-policy --name ${KEY_VAULT} \
-        --object-id ${VETS_SERVICE_IDENTITY} --secret-permissions get list
-        
-    az keyvault set-policy --name ${KEY_VAULT} \
-        --object-id ${VISITS_SERVICE_IDENTITY} --secret-permissions get list
-```
-
-### Activate applications to load secrets from Azure Key Vault
-
-Activate applications to load secrets from Azure Key Vault.
-
-```bash
-    # DO NOT FORGET to replace the value for "azure.keyvault.uri" JVM startup parameter with your Key Vault URI
-    az spring-cloud app update --name ${CUSTOMERS_SERVICE} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql,key-vault -Dazure.keyvault.uri=https://petclinic-keyvault.vault.azure.net/' \
-        --env
-    
-    # DO NOT FORGET to replace the value for "azure.keyvault.uri" JVM startup parameter with your Key Vault URI    
-    az spring-cloud app update --name ${VETS_SERVICE} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql,key-vault -Dazure.keyvault.uri=https://petclinic-keyvault.vault.azure.net/' \
-        --env
-    
-    # DO NOT FORGET to replace the value for "azure.keyvault.uri" JVM startup parameter with your Key Vault URI       
-    az spring-cloud app update --name ${VISITS_SERVICE} \
-        --jvm-options='-Xms2048m -Xmx2048m -Dspring.profiles.active=mysql,key-vault -Dazure.keyvault.uri=https://petclinic-keyvault.vault.azure.net/' \
-        --env
-```
-
 ## Next Steps
 
 In this quickstart, you've deployed an existing Spring microservices app using Azure CLI, Terraform and GitHub Actions. To learn more about Azure Spring Cloud, go to:
 
 - [Azure Spring Cloud](https://azure.microsoft.com/en-us/services/spring-cloud/)
-- [Azure Spring Cloud docs](https://docs.microsoft.com/en-us/azure/java/)
+- [Java on Azure](https://docs.microsoft.com/en-us/azure/java/)
 - [Deploy Spring microservices from scratch](https://github.com/microsoft/azure-spring-cloud-training)
 - [Deploy existing Spring microservices](https://github.com/Azure-Samples/azure-spring-cloud)
 - [Azure for Java Cloud Developers](https://docs.microsoft.com/en-us/azure/java/)

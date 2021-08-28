@@ -10,10 +10,10 @@ urlFragment: "spring-petclinic-microservices"
 
 # Deploy Spring Boot applications - using Azure Spring Cloud Enterprise and MySQL 
 
-Azure Spring Cloud enables you to easily run a Spring Boot based microservices application on Azure.
+Azure Spring Cloud enables you to easily run Spring Boot applications on Azure.
 
-This quickstart shows you how to deploy an existing Java Spring Boot applications to Azure. When 
-you're finished, you can continue to manage the application via the Azure CLI or switch to using the 
+This quickstart shows you how to deploy existing Java Spring Boot applications to Azure. When 
+you arre finished, you can continue to manage the application via the Azure CLI or switch to using the 
 Azure Portal.
 
 Note -  if you would like to deploy the same application to Azure Spring Cloud Standard, please go the
@@ -42,7 +42,7 @@ You will:
 
 ## What you will need
 
-In order to deploy a Java app to cloud, you need 
+In order to deploy Java apps to cloud, you need 
 an Azure subscription. If you do not already have an Azure 
 subscription, you can activate your 
 [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/) 
@@ -51,7 +51,7 @@ or sign up for a
 
 In addition, you will need the following:
 
-| [Azure CLI version 2.0.67 or higher](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) 
+| [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) 
 | [Java 8](https://www.azul.com/downloads/azure-only/zulu/?version=java-8-lts&architecture=x86-64-bit&package=jdk) 
 | [Maven](https://maven.apache.org/download.cgi) 
 | [MySQL CLI](https://dev.mysql.com/downloads/shell/)

@@ -325,15 +325,18 @@ Create a MySQL database in Azure Database for MySQL.
 Deploy microservice applications to Azure.
 
 ```bash
-    az spring-cloud app deploy --name ${API_GATEWAY} --config-file-patterns ${API_GATEWAY} \
+    az spring-cloud app deploy --name ${API_GATEWAY} \
+        --config-file-patterns ${API_GATEWAY} \
         --jar-path ${API_GATEWAY_JAR}
     
     
-    az spring-cloud app deploy --name ${ADMIN_SERVER} --config-file-patterns ${ADMIN_SERVER} \
+    az spring-cloud app deploy --name ${ADMIN_SERVER} \
+        --config-file-patterns ${ADMIN_SERVER} \
         --jar-path ${ADMIN_SERVER_JAR} 
     
     
-    az spring-cloud app deploy --name ${CUSTOMERS_SERVICE} --config-file-patterns ${CUSTOMERS_SERVICE}/mysql \
+    az spring-cloud app deploy --name ${CUSTOMERS_SERVICE} \
+        --config-file-patterns ${CUSTOMERS_SERVICE}/mysql \
         --jar-path ${CUSTOMERS_SERVICE_JAR} \
         --jvm-options='-Dspring.profiles.active=mysql' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
@@ -342,7 +345,8 @@ Deploy microservice applications to Azure.
               MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD}
     
     
-    az spring-cloud app deploy --name ${VETS_SERVICE} --config-file-patterns ${VETS_SERVICE}/mysql  \
+    az spring-cloud app deploy --name ${VETS_SERVICE} \
+        --config-file-patterns ${VETS_SERVICE}/mysql  \
         --jar-path ${VETS_SERVICE_JAR} \
         --jvm-options='-Dspring.profiles.active=mysql' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
@@ -351,7 +355,8 @@ Deploy microservice applications to Azure.
               MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD}
               
     
-    az spring-cloud app deploy --name ${VISITS_SERVICE} --config-file-patterns ${VISITS_SERVICE}/mysql \
+    az spring-cloud app deploy --name ${VISITS_SERVICE} \
+        --config-file-patterns ${VISITS_SERVICE}/mysql \
         --jar-path ${VISITS_SERVICE_JAR} \
         --jvm-options='-Dspring.profiles.active=mysql' \
         --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \

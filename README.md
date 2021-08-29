@@ -126,8 +126,8 @@ Login to the Azure CLI and choose your active subscription. Be sure to choose th
 
 ### Create Azure Spring Cloud Enterprise service instance
 
-Your subscription must be whitelisted to participate in Azure Spring Cloud Enterprise Private Preview.
-If your subscription is not already whitelisted, sign up for the preview at 
+Your subscription must be whitelisted to participate in the  Azure Spring Cloud Enterprise Private 
+Preview program. If your subscription is not already whitelisted, sign up for the preview at 
 [aka.ms/spring-cloud-enterprise](https://aka.ms/spring-cloud-enterprise) by clicking **Contact Me**.
 
 Prepare a name for your Azure Spring Cloud service. The name must be between 4 and 32 

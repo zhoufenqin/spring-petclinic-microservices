@@ -84,7 +84,7 @@ Install the Azure Spring Cloud "Enterprise" extension for the Azure CLI using th
 ```
 This will take a few minutes.
 
-## Provision Azure Spring Cloud service instance using Azure CLI
+## Provision Azure Spring Cloud Enterprise service instance
 
 ### Prepare your environment for deployments
 

@@ -148,7 +148,7 @@ Create an instance of Azure Spring Cloud using Azure Portal.
 
 1. In the pricing option, click **Change** and choose **Enterprise**
 
-![](./media/create-azure-spring-cloud-enterprise-tier.jpg)
+    ![](./media/create-azure-spring-cloud-enterprise-tier.jpg)
 
 1. Check **Terms** checkbox to agree with legal terms and privacy statements of the Azure Spring Cloud
 Enterprise tier offering in Azure Marketplace

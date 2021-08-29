@@ -153,7 +153,7 @@ Create an instance of Azure Spring Cloud using Azure Portal.
 1. Check **Terms** checkbox to agree with legal terms and privacy statements of the Azure Spring Cloud
 Enterprise tier offering in Azure Marketplace
 
-![](./media/agree-to-terms.jpg)
+    ![](./media/agree-to-terms.jpg)
 
 1. Click **Next: VMware Tanzu settings>** button at the bottom right of the page to 
 configure VMware Tanzu components
@@ -163,38 +163,38 @@ configure VMware Tanzu components
     > By default, Tanzu Service Registry and Tanzu Application Configuration Service are enabled. 
     Accept the defaults
 
-![](./media/create-azure-spring-cloud-enterprise-tier-vmware-tanzu-ala-carte.jpg)
+    ![](./media/create-azure-spring-cloud-enterprise-tier-vmware-tanzu-ala-carte.jpg)
 
 1. Click **Next: Diagnostic settings>** button at the bottom right 
 of the page to configure Azure Monitor and Log Analytics. Choose an existing Log Analytics or 
 create a new one
 
-![](./media/azure-spring-cloud-enterprise-tier-setup-diagnostics.jpg)
+    ![](./media/azure-spring-cloud-enterprise-tier-setup-diagnostics.jpg)
 
 1. Click **Next: Application Insights >** button at the bottom right of the page to configure
 Application Insights. Choose an existing Application Insights or create a new one 
 and set sampling rate, say 50.
 
-![](./media/azure-spring-cloud-enterprise-tier-setup-application-insights.jpg)
+    ![](./media/azure-spring-cloud-enterprise-tier-setup-application-insights.jpg)
 
 1.Click **Review and create** button at the bottom left of the page. After validation is successfully 
 completed, click **Create** button to start provisioning an Azure Spring Cloud Enterprise service 
 instance. It takes about 5 minutes to provision
 
-![](./media/create-azure-spring-cloud-enterprise-tier-validated.jpg)
+    ![](./media/create-azure-spring-cloud-enterprise-tier-validated.jpg)
 
 1. Upon completion, go to the resource
 
-![](./media/azure-spring-cloud-enterprise-tier.jpg)
+    ![](./media/azure-spring-cloud-enterprise-tier.jpg)
 
-Set your default resource group name and cluster name using the following commands:
-
-```bash
-    az configure --defaults \
-        group=${RESOURCE_GROUP} \
-        location=${REGION} \
-        spring-cloud=${SPRING_CLOUD_SERVICE}
-```
+    Set your default resource group name and cluster name using the following commands:
+    
+    ```bash
+        az configure --defaults \
+            group=${RESOURCE_GROUP} \
+            location=${REGION} \
+            spring-cloud=${SPRING_CLOUD_SERVICE}
+    ```
 
 ### Load Tanzu Application Configuration Service
 

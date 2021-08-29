@@ -146,16 +146,16 @@ Create an instance of Azure Spring Cloud using Azure Portal.
 
 1. **Open** Azure Portal - [https://ms.portal.azure.com/?AppPlatformExtension=enterprise#create/Microsoft.AppPlatform](https://ms.portal.azure.com/?AppPlatformExtension=enterprise#create/Microsoft.AppPlatform)
 
-2. In the pricing option, click **Change** and choose **Enterprise**
+1. In the pricing option, click **Change** and choose **Enterprise**
 
 ![](./media/create-azure-spring-cloud-enterprise-tier.jpg)
 
-3. Check **Terms** checkbox to agree with legal terms and privacy statements of the Azure Spring Cloud
+1. Check **Terms** checkbox to agree with legal terms and privacy statements of the Azure Spring Cloud
 Enterprise tier offering in Azure Marketplace
 
 ![](./media/agree-to-terms.jpg)
 
-4. Click **Next: VMware Tanzu settings>** button at the bottom right of the page to 
+1. Click **Next: VMware Tanzu settings>** button at the bottom right of the page to 
 configure VMware Tanzu components
 
     > **NOTE**
@@ -165,25 +165,25 @@ configure VMware Tanzu components
 
 ![](./media/create-azure-spring-cloud-enterprise-tier-vmware-tanzu-ala-carte.jpg)
 
-5. Click **Next: Diagnostic settings>** button at the bottom right 
+1. Click **Next: Diagnostic settings>** button at the bottom right 
 of the page to configure Azure Monitor and Log Analytics. Choose an existing Log Analytics or 
 create a new one
 
 ![](./media/azure-spring-cloud-enterprise-tier-setup-diagnostics.jpg)
 
-6. Click **Next: Application Insights >** button at the bottom right of the page to configure
+1. Click **Next: Application Insights >** button at the bottom right of the page to configure
 Application Insights. Choose an existing Application Insights or create a new one 
 and set sampling rate, say 50.
 
 ![](./media/azure-spring-cloud-enterprise-tier-setup-application-insights.jpg)
 
-7.Click **Review and create** button at the bottom left of the page. After validation is successfully 
+1.Click **Review and create** button at the bottom left of the page. After validation is successfully 
 completed, click **Create** button to start provisioning an Azure Spring Cloud Enterprise service 
 instance. It takes about 5 minutes to provision
 
 ![](./media/create-azure-spring-cloud-enterprise-tier-validated.jpg)
 
-8. Upon completion, go to the resource
+1. Upon completion, go to the resource
 
 ![](./media/azure-spring-cloud-enterprise-tier.jpg)
 

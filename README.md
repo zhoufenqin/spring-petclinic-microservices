@@ -177,7 +177,7 @@ and set sampling rate, say 50.
 
     ![](./media/azure-spring-cloud-enterprise-tier-setup-application-insights.jpg)
 
-1.Click **Review and create** button at the bottom left of the page. After validation is successfully 
+1. Click **Review and create** button at the bottom left of the page. After validation is successfully 
 completed, click **Create** button to start provisioning an Azure Spring Cloud Enterprise service 
 instance. It takes about 5 minutes to provision
 

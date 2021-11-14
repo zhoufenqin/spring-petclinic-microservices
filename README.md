@@ -4,35 +4,31 @@ languages:
 - java
 products:
 - Azure Spring Cloud
-description: "Deploy Spring microservices using Azure Spring Cloud and MySQL"
+description: "Deploy Spring Boot apps using Azure Spring Cloud and MySQL"
 urlFragment: "spring-petclinic-microservices"
 ---
 
-# Deploy Spring Microservices using Azure Spring Cloud and MySQL 
+# Deploy Spring Boot apps using Azure Spring Cloud and MySQL 
 
-Azure Spring Cloud enables you to easily run a Spring Boot based microservices application on Azure.
+Azure Spring Cloud enables you to easily run a Spring Boot applications on Azure.
 
 This quickstart shows you how to deploy an existing Java Spring Cloud application to Azure. When 
 you're finished, you can continue to manage the application via the Azure CLI or switch to using the 
 Azure Portal.
 
-* [Deploy Spring Microservices using Azure Spring Cloud and MySQL](#deploy-spring-microservices-using-azure-spring-cloud-and-mysql)
+* [Deploy Spring Boot apps using Azure Spring Cloud and MySQL](#deploy-spring-boot-apps-using-azure-spring-cloud-and-mysql)
   * [What will you experience](#what-will-you-experience)
   * [What you will need](#what-you-will-need)
   * [Install the Azure CLI extension](#install-the-azure-cli-extension)
   * [Clone and build the repo](#clone-and-build-the-repo)
-  * [CREATE Azure Spring Cloud service instance using Azure CLI](#provision-azure-spring-cloud-service-instance-using-azure-cli)
-  * [CREATE microservice applications](#create-microservice-applications)
-  * [Create MySQL Database](#create-mysql-database)
-  * [DEPLOY applications and set environment variables](#deploy-applications-and-set-environment-variables)
-  * [MONITOR microservice applications](#monitor-microservice-applications)
-  * [AUTOMATE deployments using GitHub Actions](#automate-deployments-using-github-actions)
-  * [Manage application secrets using Azure KeyVault](#manage-application-secrets-using-azure-keyvault)
+  * [Unit 1 - Deploy and monitor Spring Boot apps](#deploy-and-monitor-spring-boot-apps)
+  * [Unit 2 - AUTOMATE deployments using GitHub Actions](#automate-deployments-using-github-actions)
+  * [Unit 3 - Manage application secrets using Azure KeyVault](#manage-application-secrets-using-azure-keyvault)
   * [Next Steps](#next-steps)
 
 ## What will you experience
 You will:
-- Build existing Spring microservices applications
+- Build existing Spring Boot applications
 - Provision an Azure Spring Cloud service instance. If you prefer Terraform, you may also provision using Terraform, see [`README-terraform`](./terraform/README-terraform.md)
 - Deploy applications to Azure
 - Bind applications to Azure Database for MySQL
@@ -52,12 +48,31 @@ or sign up for a
 
 In addition, you will need the following:
 
-| [Azure CLI version 2.0.67 or higher](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) 
+| [Azure CLI version 2.17.1 or higher](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) 
 | [Java 8](https://www.azul.com/downloads/azure-only/zulu/?version=java-8-lts&architecture=x86-64-bit&package=jdk) 
 | [Maven](https://maven.apache.org/download.cgi) 
 | [MySQL CLI](https://dev.mysql.com/downloads/shell/)
 | [Git](https://git-scm.com/)
 |
+
+### Use Azure Cloud Shell
+
+Or, you can use the Azure Cloud Shell. Azure hosts Azure Cloud Shell, an interactive shell 
+environment that you can use through your browser. You can use the Bash with Cloud Shell 
+to work with Azure services. You can use the Cloud Shell pre-installed commands to run the 
+code in this README without having to install anything on your local environment. To start Azure 
+Cloud Shell: go to [https://shell.azure.com](https://shell.azure.com), or select the 
+Launch Cloud Shell button to open Cloud Shell in your browser.
+
+To run the code in this article in Azure Cloud Shell:
+
+1. Start Cloud Shell.
+
+1. Select the Copy button on a code block to copy the code.
+
+1. Paste the code into the Cloud Shell session by selecting Ctrl+Shift+V on Windows and Linux or by selecting Cmd+Shift+V on macOS.
+
+1. Select Enter to run the code.
 
 ## Install the Azure CLI extension
 
@@ -91,7 +106,7 @@ have the CLI extension, you may need to upgrade to the latest using --
 ```
 This will take a few minutes.
 
-## Provision Azure Spring Cloud service instance using Azure CLI
+## Deploy and monitor Spring Boot apps
 
 ### Prepare your environment for deployments
 
@@ -162,6 +177,69 @@ Set your default resource group name and cluster name using the following comman
         spring-cloud=${SPRING_CLOUD_SERVICE}
 ```
 
+### Create and configure Log Analytics Workspace
+
+Create a Log Analytics Workspace using Azure CLI:
+
+```bash
+    az monitor log-analytics workspace create \
+        --workspace-name ${LOG_ANALYTICS} \
+        --resource-group ${RESOURCE_GROUP} \
+        --location ${REGION}
+
+    export LOG_ANALYTICS_RESOURCE_ID=$(az monitor log-analytics workspace show \
+        --resource-group ${RESOURCE_GROUP} \
+        --workspace-name ${LOG_ANALYTICS} | jq -r '.id')
+
+    export SPRING_CLOUD_RESOURCE_ID=$(az spring-cloud show \
+        --name ${SPRING_CLOUD_SERVICE} \
+        --resource-group ${RESOURCE_GROUP} | jq -r '.id')
+```
+
+Setup diagnostics and publish logs and metrics from Spring Boot apps to Azure Log Analytics:
+
+```bash
+    az monitor diagnostic-settings create --name "send-logs-and-metrics-to-log-analytics" \
+        --resource ${SPRING_CLOUD_RESOURCE_ID} \
+        --workspace ${LOG_ANALYTICS_RESOURCE_ID} \
+        --logs '[
+             {
+               "category": "ApplicationConsole",
+               "enabled": true,
+               "retentionPolicy": {
+                 "enabled": false,
+                 "days": 0
+               }
+             },
+             {
+                "category": "SystemLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              },
+             {
+                "category": "IngressLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                 }
+               }
+           ]' \
+           --metrics '[
+             {
+               "category": "AllMetrics",
+               "enabled": true,
+               "retentionPolicy": {
+                 "enabled": false,
+                 "days": 0
+               }
+             }
+           ]'
+```
+
 ### Load Spring Cloud Config Server
 
 Use the `application.yml` in the root of this project to load configuration into the Config Server in Azure Spring Cloud.
@@ -172,9 +250,9 @@ Use the `application.yml` in the root of this project to load configuration into
         --name ${SPRING_CLOUD_SERVICE}
 ```
 
-## Create microservice applications
+### Create applications in Azure Spring Cloud
 
-Create 5 microservice apps.
+Create 5 apps.
 
 ```bash
     az spring-cloud app create --name ${API_GATEWAY} --instance-count 1 --is-public true \
@@ -198,7 +276,7 @@ Create 5 microservice apps.
         --jvm-options='-Xms2048m -Xmx2048m'
 ```
 
-## Create MySQL Database
+### Create MySQL Database
 
 Create a MySQL database in Azure Database for MySQL.
 
@@ -271,9 +349,9 @@ Create a MySQL database in Azure Database for MySQL.
      --server ${MYSQL_SERVER_NAME} --value "US/Pacific"
 ```
 
-## Deploy applications and set environment variables
+### Deploy Spring Boot applications and set environment variables
 
-Deploy microservice applications to Azure.
+Deploy Spring Boot applications to Azure.
 
 ```bash
     az spring-cloud app deploy --name ${API_GATEWAY} \
@@ -317,13 +395,42 @@ Deploy microservice applications to Azure.
     az spring-cloud app show --name ${API_GATEWAY} | grep url
 ```
 
-Navigate to the URL provided by the previous command to open the Pet Clinic microservice application.
+Navigate to the URL provided by the previous command to open the Pet Clinic application.
     
 ![](./media/petclinic.jpg)
 
-## Monitor microservice applications
+### Monitor Spring Boot applications
 
-Open the Application Insights created by Azure Spring Cloud and start monitoring microservice applications.
+#### Use the Petclinic application and make a few REST API calls
+
+Open the Petclinic application and try out a few tasks - view pet owners and their pets, 
+vets, and schedule pet visits:
+
+```bash
+open https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/
+```
+
+You can also `curl` the REST API exposed by the Petclinic application. The admin REST
+API allows you to create/update/remove items in Pet Owners, Pets, Vets and Visits.
+You can run the following curl commands:
+
+```bash
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/customer/owners
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/customer/owners/4
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/customer/owners/ 
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/customer/petTypes
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/customer/owners/3/pets/4
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/customer/owners/6/pets/8/
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/vet/vets
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/visit/owners/6/pets/8/visits
+curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/visit/owners/6/pets/8/visits
+```
+
+#### Start monitoring Spring Boot apps and dependencies - in Application Insights
+
+Open the Application Insights created by Azure Spring Cloud and start monitoring 
+Spring Boot applications. You can find the Application Insights in the same Resource Group where
+you created an Azure Spring Cloud service instance.
 
 Navigate to the `Application Map` blade:
 ![](./media/distributed-tracking-new-ai-agent.jpg)
@@ -370,6 +477,65 @@ the availability of applications:
 
 Navigate to the `Live Metrics` blade - you can see live metrics on screen with low latencies < 1 second:
 ![](./media/petclinic-microservices-live-metrics.jpg)
+
+#### Start monitoring Petclinic logs and metrics in Azure Log Analytics
+
+Open the Log Analytics that you created - you can find the Log Analytics in the same 
+Resource Group where you created an Azure Spring Cloud service instance.
+
+In the Log Analyics page, selects `Logs` blade and run any of the sample queries supplied below 
+for Azure Spring Cloud.
+
+Type and run the following Kusto query to see application logs:
+```sql
+AppPlatformLogsforSpring 
+| where TimeGenerated > ago(24h) 
+| limit 500
+| sort by TimeGenerated
+```
+
+Type and run the following Kusto query to see `customers-service` application logs:
+```sql
+AppPlatformLogsforSpring 
+| where AppName has "customers"
+| limit 500
+| sort by TimeGenerated
+```
+
+Type and run the following Kusto query  to see errors and exceptions thrown by each app:
+```sql
+AppPlatformLogsforSpring 
+| where Log contains "error" or Log contains "exception"
+| extend FullAppName = strcat(ServiceName, "/", AppName)
+| summarize count_per_app = count() by FullAppName, ServiceName, AppName, _ResourceId
+| sort by count_per_app desc 
+| render piechart
+```
+
+Type and run the following Kusto query to see all in the inbound calls into Azure Spring Cloud:
+```sql
+AppPlatformIngressLogs
+| project TimeGenerated, RemoteAddr, Host, Request, Status, BodyBytesSent, RequestTime, ReqId, RequestHeaders
+| sort by TimeGenerated
+```
+
+Type and run the following Kusto query to see all the logs from the managed Spring Cloud
+Config Server managed by Azure Spring Cloud:
+```sql
+AppPlatformSystemLogs
+| where LogType contains "ConfigServer"
+| project TimeGenerated, Level, LogType, ServiceName, Log
+| sort by TimeGenerated
+```
+
+Type and run the following Kusto query to see all the logs from the managed Spring Cloud
+Service Registry managed by Azure Spring Cloud:
+```sql
+AppPlatformSystemLogs
+| where LogType contains "ServiceRegistry"
+| project TimeGenerated, Level, LogType, ServiceName, Log
+| sort by TimeGenerated
+```
 
 ## Automate deployments using GitHub Actions
 
@@ -512,7 +678,7 @@ Activate applications to load secrets from Azure Key Vault.
 
 ## Next Steps
 
-In this quickstart, you've deployed an existing Spring microservices app using Azure CLI, Terraform and GitHub Actions. To learn more about Azure Spring Cloud, go to:
+In this quickstart, you've deployed an existing Spring Boot-based app using Azure CLI, Terraform and GitHub Actions. To learn more about Azure Spring Cloud, go to:
 
 - [Azure Spring Cloud](https://azure.microsoft.com/en-us/services/spring-cloud/)
 - [Azure Spring Cloud docs](https://docs.microsoft.com/en-us/azure/java/)

@@ -30,3 +30,6 @@ export MYSQL_DATABASE_NAME=petclinic
 
 # ==== KEY VAULT Info ====
 export KEY_VAULT=your-keyvault-name # customize this
+
+# ==== LOG ANALYTICS Info ====
+export LOG_ANALYTICS=${SPRING_CLOUD_SERVICE}

@@ -21,9 +21,9 @@ Azure Portal.
   * [What you will need](#what-you-will-need)
   * [Install the Azure CLI extension](#install-the-azure-cli-extension)
   * [Clone and build the repo](#clone-and-build-the-repo)
-  * [Unit 1 - Deploy and monitor Spring Boot apps](#deploy-and-monitor-spring-boot-apps)
-  * [Unit 2 - AUTOMATE deployments using GitHub Actions](#automate-deployments-using-github-actions)
-  * [Unit 3 - Manage application secrets using Azure KeyVault](#manage-application-secrets-using-azure-keyvault)
+  * [Unit 1 - Deploy and monitor Spring Boot apps](#unit-1---deploy-and-monitor-spring-boot-apps)
+  * [Unit 2 - AUTOMATE deployments using GitHub Actions](#unit-2---automate-deployments-using-github-actions)
+  * [Unit 3 - Manage application secrets using Azure KeyVault](#unit-3---manage-application-secrets-using-azure-keyvault)
   * [Next Steps](#next-steps)
 
 ## What will you experience

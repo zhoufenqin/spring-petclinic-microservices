@@ -106,7 +106,7 @@ have the CLI extension, you may need to upgrade to the latest using --
 ```
 This will take a few minutes.
 
-## Deploy and monitor Spring Boot apps
+## Unit-1 - Deploy and monitor Spring Boot apps
 
 ### Prepare your environment for deployments
 
@@ -537,7 +537,7 @@ Service Registry managed by Azure Spring Cloud:
     | sort by TimeGenerated
 ```
 
-## Automate deployments using GitHub Actions
+## Unit-2 - Automate deployments using GitHub Actions
 
 ### Prepare secrets in your Key Vault
 If you do not have a Key Vault yet, run the following commands to provision a Key Vault:
@@ -596,7 +596,7 @@ Finally, edit the workfolw file `.github/workflows/action.yml` in your forked re
 After you commited this change, you will see GitHub Actions triggered to build and deploy all the apps in the repo to your Azure Spring Cloud instance.
 ![](./media/automate-deployments-using-github-actions.jpg)
 
-## Manage application secrets using Azure KeyVault
+## Unit-3 - Manage application secrets using Azure KeyVault
 
 Use Azure Key Vault to store and load secrets to connect to MySQL database.
 

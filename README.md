@@ -96,6 +96,7 @@ This will take a few minutes.
 ### Prepare your environment for deployments
 
 Create a bash script with environment variables by making a copy of the supplied template:
+
 ```bash
     cp .scripts/setup-env-variables-azure-template.sh .scripts/setup-env-variables-azure.sh
 ```

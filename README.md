@@ -161,9 +161,10 @@ Create an instance of Azure Spring Cloud.
 
 ```bash
     az spring-cloud create --name ${SPRING_CLOUD_SERVICE} \
-        --sku standard --enable-java-agent \
-        --resource-group ${RESOURCE_GROUP} \
-        --location ${REGION}
+            --sku standard \
+            --sampling-rate 100 \
+            --resource-group ${RESOURCE_GROUP} \
+            --location ${REGION}
 ```
 
 The service instance will take around five minutes to deploy.

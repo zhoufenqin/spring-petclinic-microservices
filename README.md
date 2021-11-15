@@ -53,7 +53,13 @@ In addition, you will need the following:
 | [Maven](https://maven.apache.org/download.cgi) 
 | [MySQL CLI](https://dev.mysql.com/downloads/shell/)
 | [Git](https://git-scm.com/)
+| [`jq` utility](https://stedolan.github.io/jq/download/)
 |
+
+Note -  The [`jq` utility](https://stedolan.github.io/jq/download/). On Windows, download [this Windows port of JQ](https://github.com/stedolan/jq/releases) and add the following to the `~/.bashrc` file: 
+           ```bash
+           alias jq=<JQ Download location>/jq-win64.exe
+           ```
 
 ### Use Azure Cloud Shell
 

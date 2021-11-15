@@ -61,7 +61,12 @@ Note -  The [`jq` utility](https://stedolan.github.io/jq/download/). On Windows,
            alias jq=<JQ Download location>/jq-win64.exe
            ```
 
-### Use Azure Cloud Shell
+Note - The Bash shell. While Azure CLI should behave identically on all environments, shell 
+semantics vary. Therefore, only bash can be used with the commands in this repo. 
+To complete these repo steps on Windows, use Git Bash that accompanies the Windows distribution of 
+Git. Use only Git Bash to complete this training on Windows. Do not use WSL.
+
+### OR Use Azure Cloud Shell
 
 Or, you can use the Azure Cloud Shell. Azure hosts Azure Cloud Shell, an interactive shell 
 environment that you can use through your browser. You can use the Bash with Cloud Shell 

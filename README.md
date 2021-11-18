@@ -438,6 +438,57 @@ curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io
 curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io/api/visit/owners/6/pets/8/visits
 ```
 
+#### Get the log stream for API Gateway and Customers Service
+Use the following command to get latest 100 lines of console logs from Customer Service. 
+```bash
+az spring-cloud app logs -n ${CUSTOMERS_SERVICE} --lines 100
+```
+By adding a `-f` parameter you can get real-time log streaming from the app. Try out the below command on API Gateway.
+```bash
+az spring-cloud app logs -n ${API_GATEWAY} --lines 100 -f
+```
+You can use `az spring-cloud app logs -h` to explore more parameters and log stream functionalities.
+
+#### Open Actuator for API Gateway and Customers Service
+
+Actuator endpoints let you monitor and interact with your application. By default, Spring Boot application exposes `health` and `info` endpoints to show arbitrary application info and health information. Add the following properties as in the "key:value" form. This environment will open the Spring Actuator endpoint "env", "health", "info".
+```bash
+    az spring-cloud app update --name ${API_GATEWAY} \
+        --env management.endpoints.web.exposure.include="env,health,info"
+    
+    az spring-cloud app update --name ${CUSTOMERS_SERVICE} \
+        --env MYSQL_SERVER_FULL_NAME=${MYSQL_SERVER_FULL_NAME} \
+              MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME} \
+              MYSQL_SERVER_ADMIN_LOGIN_NAME=${MYSQL_SERVER_ADMIN_LOGIN_NAME} \
+              MYSQL_SERVER_ADMIN_PASSWORD=${MYSQL_SERVER_ADMIN_PASSWORD} \
+              management.endpoints.web.exposure.include="env,health,info"
+```
+
+You can now go back to the app overview panel and wait until the Provisioning Status changes to "Succeeded". Note that once you expose the app to public, these actuator endpoints are exposed to public as well. You can hide all endpoints by deleting the environment variables `management.endpoints.web.exposure.include`, and set `management.endpoints.web.exposure.exclude=*`.
+
+You can now access the url "<public-endpoint>/actuator" or "<test-endpoint>/actuator/" to see all endpoints exposed by Spring Boot Actuator. You can directly get `public endpoint` with the following command:
+ 
+```bash
+az spring-cloud app show --name ${API_GATEWAY} | grep url
+```
+
+For `test endpoint`, you can first get the key and domain name with the following command, then add your app names as: `<key>@${SPRING_CLOUD_SERVICE}.test.azuremicroservices.io/${CUSTOMERS_SERVICE}/default`
+
+```bash
+az spring-cloud test-endpoint list -n ${SPRING_CLOUD_SERVICE} | grep primaryTestEndpoint
+```
+
+The full URL will be like:
+```bash
+# public endpoint
+https://petclinic-microservices-api-gateway.azuremicroservices.io/actuator/
+https://petclinic-microservices-api-gateway.azuremicroservices.io/actuator/env
+https://petclinic-microservices-api-gateway.azuremicroservices.io/api/customer/actuator
+ 
+# private test endpoint
+https://primary:UuA9qltpbH...@petclinic-microservices.test.azuremicroservices.io/customers-service/default/actuator/env
+```
+
 #### Start monitoring Spring Boot apps and dependencies - in Application Insights
 
 Open the Application Insights created by Azure Spring Cloud and start monitoring 

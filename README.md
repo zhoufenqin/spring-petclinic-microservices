@@ -440,7 +440,7 @@ curl -X GET https://${SPRING_CLOUD_SERVICE}-${API_GATEWAY}.azuremicroservices.io
 
 #### Get the log stream for API Gateway and Customers Service
 
-Use the following command to get latest 100 lines of app console logs from Customers Service. 
+Use the following command to get the latest 100 lines of app console logs from Customers Service. 
 ```bash
 az spring-cloud app logs -n ${CUSTOMERS_SERVICE} --lines 100
 ```

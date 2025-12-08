@@ -1,0 +1,11 @@
+
+# Ignore log files and temporary results
+appcat.log
+result/
+
+# Allow documentation
+!ASSESSMENT_SUMMARY.md
+!TECHNICAL_NOTES.md
+!assessment-config.yaml
+!assessment-plan.md
+!.gitignore

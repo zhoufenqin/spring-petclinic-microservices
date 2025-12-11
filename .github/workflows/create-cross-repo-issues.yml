@@ -1,0 +1,131 @@
+name: Create Cross-Repo Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_issue_url:
+        description: 'Source issue URL (e.g., https://github.com/owner/repo/issues/10)'
+        required: true
+      target_repos:
+        description: 'Target repo URLs (one per line or comma-separated)'
+        required: true
+        type: string
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Create Cross-Repo Issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.CROSS_REPO_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const sourceIssueUrl = '${{ github.event.inputs.source_issue_url }}';
+            const targetReposInput = `${{ github.event.inputs.target_repos }}`;
+            
+            const sourceMatch = sourceIssueUrl.match(/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/);
+            if (!sourceMatch) {
+              core.setFailed('Invalid source issue URL format. Expected: https://github.com/owner/repo/issues/123');
+              return;
+            }
+            
+            const [, sourceOwner, sourceRepo, issueNumber] = sourceMatch;
+            
+            console.log(`Fetching issue #${issueNumber} from ${sourceOwner}/${sourceRepo}...`);
+            let sourceIssue;
+            try {
+              const response = await github.rest.issues.get({
+                owner: sourceOwner,
+                repo: sourceRepo,
+                issue_number: parseInt(issueNumber)
+              });
+              sourceIssue = response.data;
+              console.log(`Found issue: "${sourceIssue.title}"`);
+            } catch (error) {
+              core.setFailed(`Failed to fetch source issue: ${error.message}`);
+              return;
+            }
+            
+            const targetRepos = targetReposInput
+              .split(/[\n,]+/)
+              .map(url => url.trim())
+              .filter(url => url.length > 0)
+              .map(url => {
+                let match = url.match(/github\.com\/([^\/]+)\/([^\/]+?)(?:\.git)?$/);
+                if (!match) {
+                  match = url.match(/^([^\/]+)\/([^\/]+)$/);
+                }
+                if (match) {
+                  return { owner: match[1], repo: match[2] };
+                }
+                return null;
+              })
+              .filter(repo => repo !== null);
+            
+            if (targetRepos.length === 0) {
+              core.setFailed('No valid target repositories found. Use format: https://github.com/owner/repo or owner/repo');
+              return;
+            }
+            
+            console.log(`Target repositories (${targetRepos.length}):`);
+            targetRepos.forEach(r => console.log(`   - ${r.owner}/${r.repo}`));
+            
+            const separator = '\n\n' + '='.repeat(50);
+            const issueBody = sourceIssue.body + separator + `\n**Related Issue:** [${sourceOwner}/${sourceRepo}#${issueNumber}](${sourceIssueUrl})\n**Source:** ${sourceIssueUrl}`;
+            
+            const createdIssues = [];
+            const errors = [];
+            
+            for (const targetRepo of targetRepos) {
+              try {
+                console.log(`Creating issue in ${targetRepo.owner}/${targetRepo.repo}...`);
+                const newIssue = await github.rest.issues.create({
+                  owner: targetRepo.owner,
+                  repo: targetRepo.repo,
+                  title: sourceIssue.title,
+                  body: issueBody,
+                  labels: ['cross-repo']
+                });
+                
+                console.log(`Created: ${newIssue.data.html_url}`);
+                createdIssues.push({
+                  owner: targetRepo.owner,
+                  repo: targetRepo.repo,
+                  number: newIssue.data.number,
+                  url: newIssue.data.html_url
+                });
+              } catch (error) {
+                const errorMsg = `Failed to create issue in ${targetRepo.owner}/${targetRepo.repo}: ${error.message}`;
+                console.error(errorMsg);
+                errors.push(errorMsg);
+              }
+            }
+            
+            if (createdIssues.length > 0) {
+              try {
+                const linksText = createdIssues
+                  .map(issue => `- [${issue.owner}/${issue.repo}#${issue.number}](${issue.url})`)
+                  .join('\n');
+                
+                await github.rest.issues.createComment({
+                  owner: sourceOwner,
+                  repo: sourceRepo,
+                  issue_number: parseInt(issueNumber),
+                  body: `Cross-repo issues created:\n\n${linksText}`
+                });
+                console.log(`Added comment to source issue`);
+              } catch (error) {
+                console.warn(`Could not add comment to source issue: ${error.message}`);
+              }
+            }
+            
+            console.log(`Summary:`);
+            console.log(`   Successfully created: ${createdIssues.length}`);
+            console.log(`   Failed: ${errors.length}`);
+            
+            if (errors.length > 0 && createdIssues.length === 0) {
+              core.setFailed('All issue creation attempts failed');
+            }

@@ -93,10 +93,13 @@ All Three Services Report To:
 
 Database Dependencies:
 ┌─────────────────────────────────────┐
-│ customers-service → MySQL DB        │
-│ vets-service → MySQL DB             │
-│ visits-service → MySQL DB           │
+│ customers-service → MySQL DB        │  ← Assessed
+│ vets-service → MySQL DB             │  ← Assessed  
+│ visits-service → MySQL DB           │  ← Not assessed (part of full architecture)
 └─────────────────────────────────────┘
+
+Note: This assessment evaluated customers-service, vets-service, and admin-server.
+      Other services shown are part of the complete architecture.
 
 
 ## 📊 Comparison Matrix

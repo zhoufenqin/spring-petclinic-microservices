@@ -112,7 +112,7 @@
     │  └─────────────┘  └─────────────┘  └─────────────┘             │
     │                                                                  │
     │  Features:                                                       │
-    │  - Managed Identity Authentication                               │
+    │  - Managed Identity Authentication (retrieve secrets from KV)   │
     │  - Automated Backups                                             │
     │  - High Availability                                             │
     │  - Private Endpoint                                              │

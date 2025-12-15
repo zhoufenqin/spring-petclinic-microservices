@@ -129,16 +129,20 @@ This directory contains comprehensive documentation for the Azure modernization 
 
 ## 🏗️ Architecture Overview
 
-### Core Microservices
-1. **API Gateway** - Entry point, routing, load balancing (Spring Cloud Gateway)
-2. **Customers Service** - Manages owners and pets
-3. **Vets Service** - Manages veterinarians and specialties (with caching)
-4. **Visits Service** - Manages pet visit scheduling
+> **Note:** The Spring PetClinic application consists of multiple microservices. This assessment specifically evaluated three core services: customers-service, vets-service, and admin-server. The architecture diagrams show all services for completeness, including visits-service, api-gateway, config-server, and discovery-server.
 
-### Infrastructure Services
+### Core Microservices (Assessed)
+1. **Customers Service** - Manages owners and pets ✅ Assessed
+2. **Vets Service** - Manages veterinarians and specialties (with caching) ✅ Assessed
+3. **Admin Server** - Monitoring and management dashboard ✅ Assessed
+
+### Additional Microservices (Not Assessed)
+4. **Visits Service** - Manages pet visit scheduling (part of complete architecture)
+5. **API Gateway** - Entry point, routing, load balancing (Spring Cloud Gateway)
+
+### Infrastructure Services (Not Assessed)
 1. **Config Server** - Centralized configuration management
 2. **Discovery Server** - Service registry (Eureka)
-3. **Admin Server** - Monitoring and management dashboard
 
 ### Data Layer
 - **MySQL Databases** - One per core microservice

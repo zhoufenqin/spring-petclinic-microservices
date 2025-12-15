@@ -16,6 +16,8 @@ This document consolidates the Azure modernization assessment results for three 
 
 All three services are built with **Java 17** and **Spring Boot 3.4.1**, utilizing Spring Cloud for distributed system patterns. The assessment evaluates their readiness for migration to Azure services including **Azure Kubernetes Service (AKS)**, **Azure Container Apps**, and **Azure App Service**.
 
+> **Note:** While this assessment focuses on the three services listed above, the Spring PetClinic application includes additional services (visits-service, api-gateway, config-server, discovery-server) that are shown in architecture diagrams for completeness but were not individually assessed in the source repositories.
+
 ---
 
 ## Overall Statistics Summary

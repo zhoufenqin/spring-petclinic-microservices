@@ -2,6 +2,8 @@
 
 This document contains Mermaid diagrams that can be rendered in GitHub, GitLab, and other Markdown viewers.
 
+> **Note:** These diagrams show the complete Spring PetClinic architecture. While the assessment focused on three specific services (customers-service, vets-service, admin-server), the diagrams include related services (visits-service, api-gateway, config-server, discovery-server) for architectural completeness.
+
 ## 1. High-Level System Architecture
 
 ```mermaid

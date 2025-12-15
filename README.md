@@ -17,6 +17,8 @@ urlFragment: "spring-petclinic-microservices"
 
 This sample is an AZD template for a Spring Boot Pet Clinic application split into microservices running on Azure Spring Apps.
 
+> **📋 Assessment Report Available**: For a comprehensive assessment of the microservices architecture and Azure migration considerations, see [ASSESSMENT_SUMMARY.md](./ASSESSMENT_SUMMARY.md)
+
 Let's jump in and get this up and running in Azure. When you are finished, you will have a fully functional Spring Petclinic application deployed to the cloud. In later steps, you'll see how to setup a pipeline and run the application.
 
 ![Spring Petclinic Application](media/petclinic.jpg)

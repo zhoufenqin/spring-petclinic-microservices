@@ -244,7 +244,7 @@ Azure Documentation:
 
 For questions about this assessment:
 → Contact: Azure Modernization Assessment Team
-→ Date: December 15, 2025
+→ Date: December 9, 2025
 → Version: 1.0
 
 ---

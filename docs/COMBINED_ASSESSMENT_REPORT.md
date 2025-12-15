@@ -1,6 +1,6 @@
 # Spring PetClinic Microservices - Combined Assessment Report
 
-**Date:** December 15, 2025  
+**Date:** December 9, 2025  
 **Repository:** zhoufenqin/spring-petclinic-microservices  
 **Assessment Scope:** Three Core Microservices
 
@@ -105,13 +105,13 @@ All three services are built with **Java 17** and **Spring Boot 3.4.1**, utilizi
 
 **Key Migration Findings:**
 - Caching strategy needs to be evaluated for distributed cloud environment
-- PostgreSQL connectivity patterns require Azure-specific optimizations
-- Database migration to Azure PostgreSQL Flexible Server recommended
+- MySQL connectivity patterns require Azure-specific optimizations
+- Database migration to Azure Database for MySQL Flexible Server recommended
 - Backup and disaster recovery strategies need implementation
 - Monitoring and security baseline required
 
 **Recommended Resources:**
-- Azure PostgreSQL Flexible Server documentation
+- Azure Database for MySQL Flexible Server documentation
 - Azure Database Migration Service
 - Azure Monitor integration
 - Microsoft Defender for Cloud
@@ -433,5 +433,5 @@ The Spring PetClinic microservices application is well-architected for cloud mig
 ---
 
 **Report Version:** 1.0  
-**Last Updated:** December 15, 2025  
+**Last Updated:** December 9, 2025  
 **Author:** Azure Modernization Assessment Team

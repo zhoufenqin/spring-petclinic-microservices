@@ -98,7 +98,7 @@ function Generate-SummaryContent {
     $summary += "> **Severity Levels Explained:**`n"
     $summary += "> - **Mandatory**: The issue has to be resolved for the migration to be successful.`n"
     $summary += "> - **Potential**: This issue may be blocking in some situations but not in others. These issues should be reviewed to determine whether a change is required or not.`n"
-    $summary += "> - **Optional**: The issue discovered is real issue fixing which could improve the app after migration, however it is not blocking.`n`n"
+    $summary += "> - **Optional**: The issue discovered is a real issue which, if fixed, could improve the app after migration, however it is not blocking.`n`n"
     
     # Add Applications Profile section
     $summary += "## Applications Profile`n`n"

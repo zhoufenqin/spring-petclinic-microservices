@@ -1,0 +1,83 @@
+name: Upload Assessment Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_issue_url:
+        description: 'Target GitHub issue URL (e.g., https://github.com/owner/repo/issues/12)'
+        required: true
+      target_branch:
+        description: 'Target branch (default: main)'
+        required: false
+        default: 'main'
+
+jobs:
+  upload-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Verify report exists
+        run: |
+          if [ ! -f ".github/appmod/appcat/result/report.json" ]; then
+            echo "Error: Assessment report not found at .github/appmod/appcat/result/report.json"
+            exit 1
+          fi
+          echo "Report file found: $(ls -lh .github/appmod/appcat/result/report.json)"
+      
+      - name: Extract repository info from issue URL
+        id: extract-repo
+        run: |
+          ISSUE_URL="${{ github.event.inputs.target_issue_url }}"
+          if [[ $ISSUE_URL =~ github\.com/([^/]+)/([^/]+)/issues/([0-9]+) ]]; then
+            REPO_OWNER="${BASH_REMATCH[1]}"
+            REPO_NAME="${BASH_REMATCH[2]}"
+            ISSUE_NUMBER="${BASH_REMATCH[3]}"
+            echo "repo_owner=$REPO_OWNER" >> $GITHUB_OUTPUT
+            echo "repo_name=$REPO_NAME" >> $GITHUB_OUTPUT
+            echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+            echo "Extracted: Owner=$REPO_OWNER, Repo=$REPO_NAME, Issue=#$ISSUE_NUMBER"
+          else
+            echo "Error: Invalid GitHub issue URL format"
+            exit 1
+          fi
+      
+      - name: Upload assessment report
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.CROSS_REPO_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          .appmod-kit/scripts/powershell/upload-to-github.ps1 `
+            -FilePath ".github/appmod/appcat/result/report.json" `
+            -RepoOwner "${{ steps.extract-repo.outputs.repo_owner }}" `
+            -RepoName "${{ steps.extract-repo.outputs.repo_name }}" `
+            -TargetPath ".github/appmod/appcat/result/report.json" `
+            -Branch "${{ github.event.inputs.target_branch }}" `
+            -CommitMessage "Upload assessment report from ${{ github.repository }}"
+      
+      - name: Add comment to target issue
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.CROSS_REPO_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = '${{ steps.extract-repo.outputs.repo_owner }}';
+            const repo = '${{ steps.extract-repo.outputs.repo_name }}';
+            const issueNumber = parseInt('${{ steps.extract-repo.outputs.issue_number }}');
+            
+            try {
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: issueNumber,
+                body: `✅ Assessment report uploaded successfully!\n\n` +
+                      `**Report Location:** \`.github/appmod/appcat/result/report.json\`\n` +
+                      `**Source:** ${{ github.repository }}\n` +
+                      `**Branch:** ${{ github.event.inputs.target_branch }}\n` +
+                      `**Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`
+              });
+              console.log('Comment added to target issue');
+            } catch (error) {
+              console.warn(`Could not add comment to target issue: ${error.message}`);
+            }

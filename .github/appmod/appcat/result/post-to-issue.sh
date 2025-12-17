@@ -2,6 +2,8 @@
 # Script to post the summary.md content to GitHub issue #26
 # Requires: gh CLI tool and GitHub authentication
 
+set -e  # Exit on any error
+
 ISSUE_NUMBER=26
 REPO="zhoufenqin/spring-petclinic-microservices"
 SUMMARY_FILE=".github/appmod/appcat/result/summary.md"
@@ -26,9 +28,7 @@ fi
 
 # Post the comment
 echo "Posting summary to issue #${ISSUE_NUMBER}..."
-gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file "$SUMMARY_FILE"
-
-if [ $? -eq 0 ]; then
+if gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file "$SUMMARY_FILE"; then
     echo "Successfully posted summary to GitHub issue #${ISSUE_NUMBER}"
 else
     echo "Failed to post summary to GitHub issue #${ISSUE_NUMBER}"

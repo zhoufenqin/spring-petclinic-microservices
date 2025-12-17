@@ -51,10 +51,12 @@ jobs:
       - name: Post comment to issue
         if: steps.check_file.outputs.exists == 'true'
         uses: actions/github-script@v7
+        env:
+          SUMMARY_CONTENT: ${{ steps.read_summary.outputs.summary }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const summary = `${{ steps.read_summary.outputs.summary }}`;
+            const summary = process.env.SUMMARY_CONTENT;
             const issueNumber = ${{ inputs.issue_number }};
 
             try {

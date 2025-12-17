@@ -1,6 +1,10 @@
 #!/bin/bash
 # Script to post the assessment summary to a GitHub issue
 # Usage: ./post-assessment-comment.sh <issue-number>
+#
+# Note: This script is configured for the zhoufenqin/spring-petclinic-microservices
+# repository. To use with a different repository, set REPO_OWNER and REPO_NAME
+# environment variables before running this script.
 
 set -e
 
@@ -11,8 +15,8 @@ if [ -z "$1" ]; then
 fi
 
 ISSUE_NUMBER=$1
-REPO_OWNER="zhoufenqin"
-REPO_NAME="spring-petclinic-microservices"
+REPO_OWNER="${REPO_OWNER:-zhoufenqin}"
+REPO_NAME="${REPO_NAME:-spring-petclinic-microservices}"
 SUMMARY_FILE=".github/appmod/appcat/result/summary.md"
 
 # Check if summary file exists

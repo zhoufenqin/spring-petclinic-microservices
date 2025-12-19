@@ -2,8 +2,8 @@
   "version": "1.0.0",
   "producer": "Java AppCAT CLI",
   "metadata": {
-    "analysisStartTime": "2025-12-11T11:22:49.04968Z",
-    "analysisEndTime": "2025-12-11T11:31:54.85124Z",
+    "analysisStartTime": "2025-12-19T11:22:49.04968Z",
+    "analysisEndTime": "2025-12-19T11:31:54.85124Z",
     "privacyMode": "Unrestricted",
     "privacyModeHelpUrl": "https://aka.ms/appcat-privacy-mode",
     "targetIds": [
@@ -32,18 +32,18 @@
         "information": 0
       },
       "category": {
-        "framework-upgrade": 1,
+        "spring-migration": 6,
         "local-resource-access": 75,
-        "database-migration": 75,
-        "remote-communication": 10566,
+        "containerization": 3,
+        "credential-migration": 5,
+        "embedded-cache-management": 3,
+        "framework-upgrade": 1,
         "service-binding": 6,
         "messaging-service-migration": 129,
-        "spring-migration": 6,
-        "embedded-cache-management": 3,
-        "containerization": 3,
+        "remote-communication": 10566,
         "container-registry": 12,
-        "deprecated-apis": 3,
-        "credential-migration": 5
+        "database-migration": 75,
+        "deprecated-apis": 3
       }
     }
   },
@@ -286286,44 +286286,82 @@
     }
   ],
   "rules": {
-    "jakarta-ee-version-01000": {
-      "id": "jakarta-ee-version-01000",
-      "description": "Your application is not using the latest Jakarta EE version. \nUpgrading to the latest stable version ensures better performance, security, and compatibility with modern tools.\n  1. Pick a Supported Version: Review the Jakarta EE release versions and choose an actively supported version.\n  2. Update Your Project: Change the Jakarta EE version in your pom.xml or build.gradle.\n  3. Fix Compatibility Issues: Update deprecated code, replace removed features, and ensure dependencies are compatible with the new Jakarta EE version.\n  4. Thoroughly Test: Run unit, integration, and end-to-end tests to make sure everything still works after the upgrade.",
-      "title": "Jakarta EE version not latest stable",
-      "severity": "optional",
-      "effort": 3,
-      "links": [
-        {
-          "url": "https://jakarta.ee/release/",
-          "title": "Jakarta EE Release Versions"
-        },
-        {
-          "url": "https://jakarta.ee/specifications/platform/",
-          "title": "Jakarta EE Platforms"
-        }
-      ],
+    "embedded-framework-08300": {
+      "id": "embedded-framework-08300",
+      "description": "The application embeds a Micrometer library.",
+      "title": "Embedded framework - Micrometer",
+      "severity": "potential",
+      "effort": 0,
       "labels": [
-        "source=jakarta-ee",
-        "target=azure-appservice",
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "domain=java-upgrade",
-        "category=framework-upgrade",
-        "version",
-        "os=windows",
-        "os=linux"
+        "discovery",
+        "tag=Micrometer",
+        "tag=Embedded framework - Micrometer"
       ]
     },
-    "logging-usage-00050": {
-      "id": "logging-usage-00050",
+    "test-frameworks-sauge-00370": {
+      "id": "test-frameworks-sauge-00370",
       "description": "",
-      "title": "Embedded library - Logback",
+      "title": "Embedded framework - JUnit",
       "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=Logback",
-        "tag=Embedded library - Logback"
+        "tag=JUnit",
+        "tag=Embedded framework - JUnit"
+      ]
+    },
+    "embedded-cache-15000": {
+      "id": "embedded-cache-15000",
+      "description": "The application embeds the Spring Boot Cache library.\n\nAn embedded cache library is problematic because state information might not be persisted to a backing service.\n\nRecommendation: Use a cache backing service.",
+      "title": "Caching - Spring Boot Cache library",
+      "severity": "mandatory",
+      "effort": 5,
+      "labels": [
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "target=azure-appservice",
+        "source",
+        "domain=cloud-readiness",
+        "category=embedded-cache-management",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "configuration-management-0100": {
+      "id": "configuration-management-0100",
+      "description": "The application embeds Spring Cloud Config.",
+      "title": "Embedded library - Spring Cloud Config",
+      "severity": "potential",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Spring Cloud Config"
+      ]
+    },
+    "java-8-deprecate-odbc-00001": {
+      "id": "java-8-deprecate-odbc-00001",
+      "description": "Starting with JDK 8, the `JDBC-ODBC` Bridge is no longer included with the JDK. The `JDBC-ODBC` Bridge has always been considered transitional and a non-supported product that was only provided with select JDK bundles and not included with the JRE. \nInstead, use a JDBC driver provided by the vendor of the database or a commercial JDBC Driver instead of the `JDBC-ODBC` Bridge",
+      "title": "Removal of the JDBC-ODBC Bridge",
+      "severity": "mandatory",
+      "effort": 3,
+      "links": [
+        {
+          "url": "https://www.oracle.com/java/technologies/javase/8-compatibility-guide.html",
+          "title": "Compatibility Guide for JDK 8"
+        }
+      ],
+      "labels": [
+        "source=openjdk8-",
+        "source=openjdk",
+        "capability=openjdk8+",
+        "capability=openjdk",
+        "domain=java-upgrade",
+        "category=deprecated-apis",
+        "os=windows",
+        "os=linux",
+        "target=azure-appservice",
+        "target=azure-aks",
+        "target=azure-container-apps"
       ]
     },
     "azure-database-config-mongodb-02000": {
@@ -286367,261 +286405,16 @@
         "os=linux"
       ]
     },
-    "technology-usage-logging-00050": {
-      "id": "technology-usage-logging-00050",
+    "mvc-01220": {
+      "id": "mvc-01220",
       "description": "",
-      "title": "Logback",
+      "title": "Embedded framework - Spring MVC",
       "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=Sustain=Logback",
-        "tag=Embedded=Logback",
-        "tag=Logging=Logback"
-      ]
-    },
-    "configuration-management-0200": {
-      "id": "configuration-management-0200",
-      "description": "Application properties file detected",
-      "title": "Application properties file detected",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Application Properties File",
-        "tag=Application properties file detected"
-      ]
-    },
-    "embedded-framework-08300": {
-      "id": "embedded-framework-08300",
-      "description": "The application embeds a Micrometer library.",
-      "title": "Embedded framework - Micrometer",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Micrometer",
-        "tag=Embedded framework - Micrometer"
-      ]
-    },
-    "observability-technology-usage-0100": {
-      "id": "observability-technology-usage-0100",
-      "description": "",
-      "title": "Spring Boot Actuator",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Sustain=Spring Boot Actuator",
-        "tag=Observability=Spring Boot Actuator",
-        "tag=Embedded=Spring Boot Actuator"
-      ]
-    },
-    "configuration-management-technology-usage-0100": {
-      "id": "configuration-management-technology-usage-0100",
-      "description": "",
-      "title": "Spring Cloud Config",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Sustain=Spring Cloud Config",
-        "tag=Configuration Management=Spring Cloud Config",
-        "tag=Embedded=Spring Cloud Config"
-      ]
-    },
-    "google-gcr-to-azure-acr-01000": {
-      "id": "google-gcr-to-azure-acr-01000",
-      "description": "The application uses Google Container Registry (gcr.io) or Google Artifact Registry ([location]-docker.pkg.dev) for container images.\n\n**Common patterns detected may include:**\n* Container image references in Dockerfiles and docker-compose files\n* Kubernetes manifests (Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, Pods) with GCR images\n* Configuration files referencing GCR endpoints\n\n**To migrate to Azure Container Registry (ACR):**\n* **Provision Azure Container Registry:**\n   * Create an ACR instance: `az acr create --name <registry-name> --resource-group <rg> --sku Standard`\n* **Migrate container images:**\n   * Import images from GCR: `az acr import --name <acr-name> --source gcr.io/<project>/<image>:<tag> --image <image>:<tag>`\n   * Or use docker pull/push: `docker pull gcr.io/<project>/<image>` then `docker push <acr-name>.azurecr.io/<image>`\n* **Update image references:**\n   * Replace `gcr.io/<project>/<image>` with `<acr-name>.azurecr.io/<image>`\n   * Replace `<location>-docker.pkg.dev/<project>/<repo>/<image>` with `<acr-name>.azurecr.io/<image>`\n   * Update all Dockerfiles, docker-compose files, Kubernetes manifests, and Helm charts\n* **Configure authentication:**\n   * **For AKS (recommended):** Enable managed identity integration: `az aks update --name <aks-cluster> --attach-acr <acr-name>`\n   * **For other services:** Use Azure managed identities or service principals\n   * **For local development:** Use `az acr login --name <acr-name>`\n* **Remove GCR-specific tooling:**\n   * Replace gcloud docker authentication with Azure CLI or service principals\n* **For language packages (if using Artifact Registry for npm/Maven/Python):**\n   * Use Azure Artifacts for package management instead of Google Artifact Registry",
-      "title": "Google Container Registry (GCR) or Artifact Registry usage detected",
-      "severity": "mandatory",
-      "effort": 3,
-      "links": [
-        {
-          "url": "https://learn.microsoft.com/en-us/azure/container-registry/",
-          "title": "Azure Container Registry documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images",
-          "title": "Migrate from Google Container Registry to Azure Container Registry"
-        },
-        {
-          "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-best-practices",
-          "title": "Azure Container Registry best practices"
-        }
-      ],
-      "labels": [
-        "source=google-gcr",
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "domain=cloud-readiness",
-        "category=container-registry",
-        "os=windows",
-        "os=linux"
-      ]
-    },
-    "java-8-deprecate-odbc-00001": {
-      "id": "java-8-deprecate-odbc-00001",
-      "description": "Starting with JDK 8, the `JDBC-ODBC` Bridge is no longer included with the JDK. The `JDBC-ODBC` Bridge has always been considered transitional and a non-supported product that was only provided with select JDK bundles and not included with the JRE. \nInstead, use a JDBC driver provided by the vendor of the database or a commercial JDBC Driver instead of the `JDBC-ODBC` Bridge",
-      "title": "Removal of the JDBC-ODBC Bridge",
-      "severity": "mandatory",
-      "effort": 3,
-      "links": [
-        {
-          "url": "https://www.oracle.com/java/technologies/javase/8-compatibility-guide.html",
-          "title": "Compatibility Guide for JDK 8"
-        }
-      ],
-      "labels": [
-        "source=openjdk8-",
-        "source=openjdk",
-        "capability=openjdk8+",
-        "capability=openjdk",
-        "domain=java-upgrade",
-        "category=deprecated-apis",
-        "os=windows",
-        "os=linux",
-        "target=azure-appservice",
-        "target=azure-aks",
-        "target=azure-container-apps"
-      ]
-    },
-    "3rd-party-06000": {
-      "id": "3rd-party-06000",
-      "description": "The application embeds the Jetty framework.",
-      "title": "Embedded framework - Jetty",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Jetty",
-        "tag=Embedded framework - Jetty"
-      ]
-    },
-    "non-xml-technology-usage-20000": {
-      "id": "non-xml-technology-usage-20000",
-      "description": "",
-      "title": "Properties",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Embedded=Properties",
-        "tag=Other=Properties",
-        "tag=Sustain=Properties"
-      ]
-    },
-    "azure-message-queue-amqp-02000": {
-      "id": "azure-message-queue-amqp-02000",
-      "description": "The application uses Spring AMQP dependency. To migrate a Java application that uses Spring AMQP to Azure, you can follow these recommendations:\n\n * Provision **Azure Service Bus**: Use Azure Service Bus, a fully managed messaging service that offers reliable message queuing and publish/subscribe capabilities.\n\n * Update the application's **messaging connection** details: Modify the Java application's configuration updating the connection information and message queues/topics.\n\n * Configure Azure Service Bus **queues/topics**: Create appropriate queues or topics in Azure Service Bus to align with your application's messaging requirements. Configure access control and security settings as needed.",
-      "title": "Spring AMQP dependency found",
-      "severity": "optional",
-      "effort": 5,
-      "links": [
-        {
-          "url": "https://learn.microsoft.com/azure/service-bus-messaging",
-          "title": "Azure Service Bus documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/developer/java/spring-framework/using-service-bus-in-spring-applications",
-          "title": "Use Azure Service Bus in Spring applications"
-        }
-      ],
-      "labels": [
-        "target=azure-appservice",
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "source",
-        "domain=cloud-readiness",
-        "category=messaging-service-migration",
-        "message-queue",
-        "AMQP Client",
-        "os=windows",
-        "os=linux"
-      ]
-    },
-    "technology-usage-test-frameworks-00370": {
-      "id": "technology-usage-test-frameworks-00370",
-      "description": "",
-      "title": "JUnit",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Sustain=JUnit",
-        "tag=Embedded=JUnit",
-        "tag=Test=JUnit"
-      ]
-    },
-    "azure-aws-config-credential-01000": {
-      "id": "azure-aws-config-credential-01000",
-      "description": "The application contains AWS credential configuration.\n\n * Migrate credentials to **Azure Key Vault**: Create an Azure Key Vault to securely store your application's credentials and sensitive information. Migrate the AWS credentials to Azure Key Vault, which provides a centralized and highly secure storage solution.\n\n * **Modify application code**: Update the Java application's code to retrieve the required credentials from Azure Key Vault instead of AWS. Use the appropriate Azure SDK or libraries to integrate with Azure Key Vault and fetch the credentials securely during runtime.\n\n * Implement **Azure Active Directory (Azure AD) authentication**: If the AWS credentials are used for authentication purposes, consider migrating to Azure AD for user authentication and authorization. Implement Azure AD authentication in your Java application to ensure secure access to Azure resources.",
-      "title": "AWS credential configuration",
-      "severity": "mandatory",
-      "effort": 3,
-      "links": [
-        {
-          "url": "https://learn.microsoft.com/azure/key-vault",
-          "title": "Azure Key Vault documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/key-vault/secrets/quick-create-java",
-          "title": "Quickstart: Azure Key Vault Secret client library for Java"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/active-directory",
-          "title": "Azure Active Directory documentation"
-        }
-      ],
-      "labels": [
-        "target=azure-appservice",
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "source",
-        "domain=cloud-readiness",
-        "category=credential-migration",
-        "AWS",
-        "os=windows",
-        "os=linux"
-      ]
-    },
-    "technology-usage-database-03100": {
-      "id": "technology-usage-database-03100",
-      "description": "",
-      "title": "Spring Data JPA",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Store=Spring Data JPA",
-        "tag=Persistence=Spring Data JPA",
-        "tag=Embedded=Spring Data JPA"
-      ]
-    },
-    "technology-usage-3rd-party-15000": {
-      "id": "technology-usage-3rd-party-15000",
-      "description": "",
-      "title": "Apache Aries",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Execute=Apache Aries",
-        "tag=Embedded=Apache Aries",
-        "tag=3rd party=Apache Aries"
-      ]
-    },
-    "technology-usage-embedded-framework-08200": {
-      "id": "technology-usage-embedded-framework-08200",
-      "description": "",
-      "title": "Spring DI",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Inversion of Control=Spring DI",
-        "tag=Execute=Spring DI",
-        "tag=Embedded=Spring DI"
+        "tag=Spring MVC",
+        "tag=Embedded framework - Spring MVC"
       ]
     },
     "technology-usage-embedded-framework-08300": {
@@ -286637,29 +286430,140 @@
         "tag=Integration=Micrometer"
       ]
     },
-    "technology-usage-mvc-01200": {
-      "id": "technology-usage-mvc-01200",
+    "technology-usage-test-frameworks-00050": {
+      "id": "technology-usage-test-frameworks-00050",
       "description": "",
-      "title": "Spring MVC",
+      "title": "Hamcrest",
       "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=View=Spring MVC",
-        "tag=Embedded=Spring MVC",
-        "tag=MVC=Spring MVC"
+        "tag=Sustain=Hamcrest",
+        "tag=Embedded=Hamcrest",
+        "tag=Test=Hamcrest"
       ]
     },
-    "3rd-party-14000": {
-      "id": "3rd-party-14000",
-      "description": "The application embeds the Apache Aries framework.",
-      "title": "Embedded framework - Apache Aries",
+    "discover-maven-xml": {
+      "id": "discover-maven-xml",
+      "description": "",
+      "title": "Maven XML file",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Maven XML"
+      ]
+    },
+    "connect-01700": {
+      "id": "connect-01700",
+      "description": "",
+      "title": "Embedded library - WSDL",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=WSDL",
+        "tag=Embedded library - WSDL"
+      ]
+    },
+    "configuration-management-0400": {
+      "id": "configuration-management-0400",
+      "description": "Spring logging properties detected",
+      "title": "Spring logging properties detected",
       "severity": "potential",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=Apache Aries",
-        "tag=Embedded framework - Apache Aries"
+        "tag=Spring Properties",
+        "tag=Spring logging properties detected"
+      ]
+    },
+    "discover-license": {
+      "id": "discover-license",
+      "description": "",
+      "title": "Discover project license",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=License=Mozilla Public License 2.0"
+      ]
+    },
+    "database-03000": {
+      "id": "database-03000",
+      "description": "",
+      "title": "Embedded Spring Data JPA",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Spring Data JPA",
+        "tag=Embedded Spring Data JPA"
+      ]
+    },
+    "technology-usage-3rd-party-15000": {
+      "id": "technology-usage-3rd-party-15000",
+      "description": "",
+      "title": "Apache Aries",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Execute=Apache Aries",
+        "tag=Embedded=Apache Aries",
+        "tag=3rd party=Apache Aries"
+      ]
+    },
+    "discover-java-files": {
+      "id": "discover-java-files",
+      "description": "",
+      "title": "Java source files",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Java Source"
+      ]
+    },
+    "azure-database-postgresql-02000": {
+      "id": "azure-database-postgresql-02000",
+      "description": "To migrate a Java application that uses a PostgreSQL database to Azure, you can follow these recommendations:\n\n * Use a managed **Azure Database for PostgreSQL Flexible Server**: For that create a managed PostgreSQL Flexible Server database in Azure and choose the appropriate pricing tier based on your application's requirements for performance, storage, and availability.\n\n * **Migrate** the existing PostgreSQL database: For that you can use the Azure Database Migration Service (DMS) to perform an online migration with minimal downtime.\n\n * Update the application's **database connection** details: Modify the Java application's configuration to point to the newly provisioned Azure Database for PostgreSQL. Update the connection string, hostname, port, username, and password information accordingly.\n\n * Enable **monitoring and diagnostics**: Utilize Azure Monitor to gain insights into the performance and health of your Java application and the underlying PostgreSQL database. Set up metrics, alerts, and log analytics to proactively identify and resolve issues.\n\n * Implement **security** measures: Apply security best practices to protect your Java application and the PostgreSQL database. This includes implementing authentication and authorization mechanisms with passwordless connections and leveraging Microsoft Defender for Cloud for threat detection and vulnerability assessments.\n\n * **Backup** your data: Azure Database for PostgreSQL provides automated backups by default. You can configure the retention period for backups based on your requirements. You can also enable geo-redundant backups, if needed, to enhance data durability and availability.",
+      "title": "PostgreSQL database found",
+      "severity": "potential",
+      "effort": 3,
+      "links": [
+        {
+          "url": "https://learn.microsoft.com/azure/postgresql/flexible-server",
+          "title": "Azure PostgreSQL Flexible Server documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/dms",
+          "title": "Azure Database Migration Service documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/azure-monitor",
+          "title": "Azure Monitor documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/defender-for-cloud",
+          "title": "Microsoft Defender for Cloud"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/postgresql/single-server/concepts-backup",
+          "title": "Backup and restore in Azure Database for PostgreSQL"
+        }
+      ],
+      "labels": [
+        "target=azure-appservice",
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "source",
+        "domain=cloud-readiness",
+        "category=database-migration",
+        "database",
+        "postgresql",
+        "os=windows",
+        "os=linux"
       ]
     },
     "database-reliability-01000": {
@@ -286705,40 +286609,21 @@
         "os=linux"
       ]
     },
-    "embedded-framework-09300": {
-      "id": "embedded-framework-09300",
-      "description": "",
-      "title": "Embedded framework - Eureka Client",
-      "severity": "information",
-      "effort": 0,
+    "hardcoded-urls-00001": {
+      "id": "hardcoded-urls-00001",
+      "description": "This patterns verifies in source code and configuration files the presence of hardcoded URLs using the HTTP protocol (HTTP/HTTPS). This URL would need to be replaced by the new resource's URL during the Cloud migration, if any change occured.",
+      "title": "Avoid using hardcoded URLs (HTTP protocol) in source code",
+      "severity": "optional",
+      "effort": 3,
       "labels": [
-        "discovery",
-        "tag=Eureka"
-      ]
-    },
-    "technology-usage-embedded-framework-08400": {
-      "id": "technology-usage-embedded-framework-08400",
-      "description": "",
-      "title": "Spring Web",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=View=Spring Web",
-        "tag=Web=Spring Web",
-        "tag=Embedded=Spring Web"
-      ]
-    },
-    "database-03000": {
-      "id": "database-03000",
-      "description": "",
-      "title": "Embedded Spring Data JPA",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Spring Data JPA",
-        "tag=Embedded Spring Data JPA"
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "target=azure-appservice",
+        "source",
+        "domain=cloud-readiness",
+        "category=remote-communication",
+        "os=windows",
+        "os=linux"
       ]
     },
     "test-frameworks-sauge-00050": {
@@ -286753,64 +286638,54 @@
         "tag=Embedded framework - Hamcrest"
       ]
     },
-    "spring-boot-to-azure-eureka-02000": {
-      "id": "spring-boot-to-azure-eureka-02000",
-      "description": "The application embeds the Eureka client. If you are migrating to Azure Container Apps, the connection info of Eureka can be injected upon app start.\n\n Find any explicit configurations of config server connection info:\n\n If configured in **configuration files**: they will be ignored and overrided by Azure Container Apps.\n\n If configured in **command line parameters**, **Java system attribute**, **environment variable**: they need to be removed or you might experience conflicts and unexpected behavior.",
-      "title": "Embedded framework - Eureka Client",
-      "severity": "potential",
+    "dockerfile-00000": {
+      "id": "dockerfile-00000",
+      "description": "No Dockerfile was found in the project. This suggests the application may not yet be containerized. \nConsider creating a Dockerfile to enable container-based replatforming to Azure services such as Azure Container Apps or AKS.",
+      "title": "No Dockerfile found",
+      "severity": "mandatory",
       "effort": 1,
       "links": [
         {
-          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-eureka-server?tabs=azure-cli",
-          "title": "Connect to a managed Eureka Server for Spring in Azure Container Apps"
-        },
-        {
-          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-eureka-server-highly-available",
-          "title": "Create a highly available Eureka server component cluster in Azure Container Apps"
-        },
-        {
-          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-admin-eureka-integration",
-          "title": "Integrate Admin for Spring with Eureka Server for Spring in Azure Container Apps"
-        },
-        {
-          "url": "https://learn.microsoft.com/en-us/azure/developer/java/migration/migrate-spring-cloud-to-azure-container-apps#remove-restricted-configurations",
-          "title": "Remove restricted configurations"
+          "url": "https://www.baeldung.com/java-dockerize-app",
+          "title": "Dockerizing a Java Application"
         }
       ],
       "labels": [
-        "target=azure-appservice",
         "target=azure-aks",
         "target=azure-container-apps",
+        "capability=containerization",
         "source",
         "domain=cloud-readiness",
-        "category=spring-migration",
+        "category=containerization",
+        "containerization",
         "os=windows",
         "os=linux"
       ]
     },
-    "technology-usage-test-frameworks-00050": {
-      "id": "technology-usage-test-frameworks-00050",
+    "configuration-management-technology-usage-0300": {
+      "id": "configuration-management-technology-usage-0300",
       "description": "",
-      "title": "Hamcrest",
+      "title": "Spring Properties",
       "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=Sustain=Hamcrest",
-        "tag=Embedded=Hamcrest",
-        "tag=Test=Hamcrest"
+        "tag=Embedded=Spring Properties",
+        "tag=Sustain=Spring Properties",
+        "tag=Configuration Management=Spring Properties"
       ]
     },
-    "embedded-framework-08200": {
-      "id": "embedded-framework-08200",
-      "description": "The application embeds a Spring DI library.",
-      "title": "Embedded framework - Spring DI",
-      "severity": "potential",
+    "technology-usage-connect-01700": {
+      "id": "technology-usage-connect-01700",
+      "description": "",
+      "title": "WSDL",
+      "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=Spring DI",
-        "tag=Embedded framework - Spring DI"
+        "tag=Connect=WSDL",
+        "tag=Embedded=WSDL",
+        "tag=Web Service=WSDL"
       ]
     },
     "azure-tas-binding-01000": {
@@ -286850,154 +286725,82 @@
         "os=linux"
       ]
     },
-    "unsecure-network-protocol-00000": {
-      "id": "unsecure-network-protocol-00000",
-      "description": "Using secured protocols such as HTTPS and SFTP (over HTTP and FTP) should now be the norm as applications are more and more exposed and interconnected. \nThis CloudReady patterns looks for unescured URI in the source code or deprecated URI libraries. \nIdeally, URLs should be replaced in your source code by secured protocols HTTPS and SFTP (and ensure the infrastructure implements these protocols for the resources your application calls, uses or references).",
-      "title": "Use of unsecured network protocols or URI libraries",
-      "severity": "mandatory",
+    "embedded-framework-08400": {
+      "id": "embedded-framework-08400",
+      "description": "The application embeds the Spring Web framework.",
+      "title": "Embedded framework - Spring Web",
+      "severity": "potential",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Spring Web",
+        "tag=Embedded framework - Spring Web"
+      ]
+    },
+    "technology-usage-database-03100": {
+      "id": "technology-usage-database-03100",
+      "description": "",
+      "title": "Spring Data JPA",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Store=Spring Data JPA",
+        "tag=Persistence=Spring Data JPA",
+        "tag=Embedded=Spring Data JPA"
+      ]
+    },
+    "logging-usage-00050": {
+      "id": "logging-usage-00050",
+      "description": "",
+      "title": "Embedded library - Logback",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Logback",
+        "tag=Embedded library - Logback"
+      ]
+    },
+    "jakarta-ee-version-01000": {
+      "id": "jakarta-ee-version-01000",
+      "description": "Your application is not using the latest Jakarta EE version. \nUpgrading to the latest stable version ensures better performance, security, and compatibility with modern tools.\n  1. Pick a Supported Version: Review the Jakarta EE release versions and choose an actively supported version.\n  2. Update Your Project: Change the Jakarta EE version in your pom.xml or build.gradle.\n  3. Fix Compatibility Issues: Update deprecated code, replace removed features, and ensure dependencies are compatible with the new Jakarta EE version.\n  4. Thoroughly Test: Run unit, integration, and end-to-end tests to make sure everything still works after the upgrade.",
+      "title": "Jakarta EE version not latest stable",
+      "severity": "optional",
       "effort": 3,
       "links": [
         {
-          "url": "https://developers.google.com/web/fundamentals/security/encrypt-in-transit/why-https",
-          "title": "Why HTTPS matters"
+          "url": "https://jakarta.ee/release/",
+          "title": "Jakarta EE Release Versions"
         },
         {
-          "url": "https://www.ssh.com/ssh/sftp/",
-          "title": "SSH File Transfer Protocol (SFTP): Get SFTP client & server"
+          "url": "https://jakarta.ee/specifications/platform/",
+          "title": "Jakarta EE Platforms"
         }
       ],
       "labels": [
+        "source=jakarta-ee",
+        "target=azure-appservice",
         "target=azure-aks",
         "target=azure-container-apps",
-        "target=azure-appservice",
-        "capability=containerization",
-        "source",
-        "domain=cloud-readiness",
-        "category=remote-communication",
-        "containerization",
+        "domain=java-upgrade",
+        "category=framework-upgrade",
+        "version",
         "os=windows",
         "os=linux"
       ]
     },
-    "logging-usage-00030": {
-      "id": "logging-usage-00030",
+    "technology-usage-embedded-framework-08200": {
+      "id": "technology-usage-embedded-framework-08200",
       "description": "",
-      "title": "Embedded library - SLF4J",
+      "title": "Spring DI",
       "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=SLF4J",
-        "tag=Embedded library - SLF4J"
-      ]
-    },
-    "embedded-cache-libraries-15000": {
-      "id": "embedded-cache-libraries-15000",
-      "description": "\n                        The application embeds the Spring Boot Cache library.\n                    ",
-      "title": "Spring Boot Cache library",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Spring Boot Cache",
-        "tag=Caching - Spring Boot Cache library"
-      ]
-    },
-    "mvc-01220": {
-      "id": "mvc-01220",
-      "description": "",
-      "title": "Embedded framework - Spring MVC",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Spring MVC",
-        "tag=Embedded framework - Spring MVC"
-      ]
-    },
-    "localhost-00004": {
-      "id": "localhost-00004",
-      "description": "The app is trying to use localhost, please try to migrate the resource to cloud",
-      "title": "Localhost Usage",
-      "severity": "optional",
-      "effort": 7,
-      "labels": [
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "target=azure-appservice",
-        "capability=containerization",
-        "source",
-        "domain=cloud-readiness",
-        "category=local-resource-access",
-        "localhost",
-        "containerization",
-        "os=windows",
-        "os=linux"
-      ]
-    },
-    "configuration-management-technology-usage-0300": {
-      "id": "configuration-management-technology-usage-0300",
-      "description": "",
-      "title": "Spring Properties",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Embedded=Spring Properties",
-        "tag=Sustain=Spring Properties",
-        "tag=Configuration Management=Spring Properties"
-      ]
-    },
-    "discover-license": {
-      "id": "discover-license",
-      "description": "",
-      "title": "Discover project license",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=License=Mozilla Public License 2.0"
-      ]
-    },
-    "spring-boot-to-azure-config-server-03000": {
-      "id": "spring-boot-to-azure-config-server-03000",
-      "description": "The application embeds Spring Cloud Config.\n\n If you are migrating to Azure Container Apps, the connection info of Config Server can be injected automatically upon app start.\n Find any explicit configurations of config server connection info:\n\n If configured in **configuration files**: they will be ignored and overrided by Azure Container Apps.\n\n If configured in **command line parameters**, **Java system attribute**, **environment variable**: they need to be removed or you might experience conflicts and unexpected behavior.\n\n Configure the managed Config Server after creating an Azure Container Apps environment.",
-      "title": "Embedded library - Spring Cloud Config",
-      "severity": "potential",
-      "effort": 1,
-      "links": [
-        {
-          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-config-server?tabs=azure-cli",
-          "title": "Connect to a managed Config Server for Spring in Azure Container Apps"
-        }
-      ],
-      "labels": [
-        "source=springboot",
-        "target=azure-appservice",
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "domain=cloud-readiness",
-        "category=spring-migration",
-        "Spring Cloud Config",
-        "os=windows",
-        "os=linux"
-      ]
-    },
-    "hardcoded-urls-00001": {
-      "id": "hardcoded-urls-00001",
-      "description": "This patterns verifies in source code and configuration files the presence of hardcoded URLs using the HTTP protocol (HTTP/HTTPS). This URL would need to be replaced by the new resource's URL during the Cloud migration, if any change occured.",
-      "title": "Avoid using hardcoded URLs (HTTP protocol) in source code",
-      "severity": "optional",
-      "effort": 3,
-      "labels": [
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "target=azure-appservice",
-        "source",
-        "domain=cloud-readiness",
-        "category=remote-communication",
-        "os=windows",
-        "os=linux"
+        "tag=Inversion of Control=Spring DI",
+        "tag=Execute=Spring DI",
+        "tag=Embedded=Spring DI"
       ]
     },
     "azure-aws-config-secret-manager-05000": {
@@ -287032,15 +286835,145 @@
         "os=linux"
       ]
     },
-    "discover-properties-file": {
-      "id": "discover-properties-file",
+    "embedded-framework-09300": {
+      "id": "embedded-framework-09300",
       "description": "",
-      "title": "Properties file",
+      "title": "Embedded framework - Eureka Client",
       "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=Properties"
+        "tag=Eureka"
+      ]
+    },
+    "configuration-management-0200": {
+      "id": "configuration-management-0200",
+      "description": "Application properties file detected",
+      "title": "Application properties file detected",
+      "severity": "potential",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Application Properties File",
+        "tag=Application properties file detected"
+      ]
+    },
+    "technology-usage-embedded-framework-08500": {
+      "id": "technology-usage-embedded-framework-08500",
+      "description": "",
+      "title": "Spring Boot Cache",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Embedded=Spring Boot Cache",
+        "tag=Store=Spring Boot Cache",
+        "tag=Caching=Spring Boot Cache"
+      ]
+    },
+    "azure-message-queue-amqp-02000": {
+      "id": "azure-message-queue-amqp-02000",
+      "description": "The application uses Spring AMQP dependency. To migrate a Java application that uses Spring AMQP to Azure, you can follow these recommendations:\n\n * Provision **Azure Service Bus**: Use Azure Service Bus, a fully managed messaging service that offers reliable message queuing and publish/subscribe capabilities.\n\n * Update the application's **messaging connection** details: Modify the Java application's configuration updating the connection information and message queues/topics.\n\n * Configure Azure Service Bus **queues/topics**: Create appropriate queues or topics in Azure Service Bus to align with your application's messaging requirements. Configure access control and security settings as needed.",
+      "title": "Spring AMQP dependency found",
+      "severity": "optional",
+      "effort": 5,
+      "links": [
+        {
+          "url": "https://learn.microsoft.com/azure/service-bus-messaging",
+          "title": "Azure Service Bus documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/developer/java/spring-framework/using-service-bus-in-spring-applications",
+          "title": "Use Azure Service Bus in Spring applications"
+        }
+      ],
+      "labels": [
+        "target=azure-appservice",
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "source",
+        "domain=cloud-readiness",
+        "category=messaging-service-migration",
+        "message-queue",
+        "AMQP Client",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "3rd-party-14000": {
+      "id": "3rd-party-14000",
+      "description": "The application embeds the Apache Aries framework.",
+      "title": "Embedded framework - Apache Aries",
+      "severity": "potential",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Apache Aries",
+        "tag=Embedded framework - Apache Aries"
+      ]
+    },
+    "technology-usage-test-frameworks-00370": {
+      "id": "technology-usage-test-frameworks-00370",
+      "description": "",
+      "title": "JUnit",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Sustain=JUnit",
+        "tag=Embedded=JUnit",
+        "tag=Test=JUnit"
+      ]
+    },
+    "embedded-framework-embedded-framework-09300": {
+      "id": "embedded-framework-embedded-framework-09300",
+      "description": "",
+      "title": "Eureka",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Execute=Eureka",
+        "tag=Processing=Eureka",
+        "tag=Embedded=Eureka"
+      ]
+    },
+    "observability-0100": {
+      "id": "observability-0100",
+      "description": "",
+      "title": "Embedded library - Spring Boot Actuator",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Spring Boot Actuator",
+        "tag=Embedded library - Spring Boot Actuator"
+      ]
+    },
+    "technology-usage-web-02400": {
+      "id": "technology-usage-web-02400",
+      "description": "The application uses Eclipse RCP",
+      "title": "Embedded technology - Eclipse RCP",
+      "severity": "potential",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=View=Eclipse RCP",
+        "tag=Rich=Eclipse RCP",
+        "tag=Embedded=Eclipse RCP"
+      ]
+    },
+    "technology-usage-mvc-01200": {
+      "id": "technology-usage-mvc-01200",
+      "description": "",
+      "title": "Spring MVC",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=View=Spring MVC",
+        "tag=Embedded=Spring MVC",
+        "tag=MVC=Spring MVC"
       ]
     },
     "azure-database-microsoft-oracle-07000": {
@@ -287084,298 +287017,70 @@
         "os=linux"
       ]
     },
-    "azure-database-microsoft-mariadb-06000": {
-      "id": "azure-database-microsoft-mariadb-06000",
-      "description": "To migrate a Java application that uses a MariaDB database to Azure, you can follow these recommendations:\n\n * Use a managed **Azure Database for MariaDB**: For that create a managed MariaDB database in Azure and choose the appropriate pricing tier based on your application's requirements for performance, storage, and availability.\n\n * **Migrate** the existing MariaDB database: For that you can use the Azure Database Migration Service (DMS) to perform an online migration with minimal downtime.\n\n * Update the application's **database connection** details: Modify the Java application's configuration to point to the newly provisioned Azure Database for MariaDB. Update the connection string, hostname, port, username, and password information accordingly.\n\n * Enable **monitoring and diagnostics**: Utilize Azure Monitor to gain insights into the performance and health of your Java application and the underlying MariaDB database. Set up metrics, alerts, and log analytics to proactively identify and resolve issues.\n\n * Implement **security** measures: Apply security best practices to protect your Java application and the MariaDB database. This includes implementing authentication and authorization mechanisms with passwordless connections and leveraging Microsoft Defender for Cloud for threat detection and vulnerability assessments.\n\n * **Backup** your data: Azure Database for MariaDB provides automated backups by default. You can configure the retention period for backups based on your requirements. You can also enable geo-redundant backups, if needed, to enhance data durability and availability.",
-      "title": "MariaDB database found",
+    "3rd-party-06000": {
+      "id": "3rd-party-06000",
+      "description": "The application embeds the Jetty framework.",
+      "title": "Embedded framework - Jetty",
       "severity": "potential",
-      "effort": 3,
-      "links": [
-        {
-          "url": "https://learn.microsoft.com/azure/mariadb",
-          "title": "Azure Database for MariaDB documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/dms",
-          "title": "Azure Database Migration Service documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/azure-monitor",
-          "title": "Azure Monitor documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/defender-for-cloud",
-          "title": "Microsoft Defender for Cloud"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/mariadb/howto-restore-server-portal",
-          "title": "Backup and restore in Azure Database for MariaDB"
-        }
-      ],
+      "effort": 0,
       "labels": [
-        "target=azure-appservice",
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "source",
-        "domain=cloud-readiness",
-        "category=database-migration",
-        "database",
-        "mariadb",
-        "os=windows",
-        "os=linux"
+        "discovery",
+        "tag=Jetty",
+        "tag=Embedded framework - Jetty"
       ]
     },
-    "embedded-framework-embedded-framework-09300": {
-      "id": "embedded-framework-embedded-framework-09300",
+    "technology-usage-embedded-framework-08400": {
+      "id": "technology-usage-embedded-framework-08400",
       "description": "",
-      "title": "Eureka",
+      "title": "Spring Web",
       "severity": "information",
       "effort": 0,
       "labels": [
         "discovery",
-        "tag=Execute=Eureka",
-        "tag=Processing=Eureka",
-        "tag=Embedded=Eureka"
+        "tag=View=Spring Web",
+        "tag=Web=Spring Web",
+        "tag=Embedded=Spring Web"
       ]
     },
-    "dockerfile-00000": {
-      "id": "dockerfile-00000",
-      "description": "No Dockerfile was found in the project. This suggests the application may not yet be containerized. \nConsider creating a Dockerfile to enable container-based replatforming to Azure services such as Azure Container Apps or AKS.",
-      "title": "No Dockerfile found",
+    "logging-usage-00030": {
+      "id": "logging-usage-00030",
+      "description": "",
+      "title": "Embedded library - SLF4J",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=SLF4J",
+        "tag=Embedded library - SLF4J"
+      ]
+    },
+    "unsecure-network-protocol-00000": {
+      "id": "unsecure-network-protocol-00000",
+      "description": "Using secured protocols such as HTTPS and SFTP (over HTTP and FTP) should now be the norm as applications are more and more exposed and interconnected. \nThis CloudReady patterns looks for unescured URI in the source code or deprecated URI libraries. \nIdeally, URLs should be replaced in your source code by secured protocols HTTPS and SFTP (and ensure the infrastructure implements these protocols for the resources your application calls, uses or references).",
+      "title": "Use of unsecured network protocols or URI libraries",
       "severity": "mandatory",
-      "effort": 1,
+      "effort": 3,
       "links": [
         {
-          "url": "https://www.baeldung.com/java-dockerize-app",
-          "title": "Dockerizing a Java Application"
+          "url": "https://developers.google.com/web/fundamentals/security/encrypt-in-transit/why-https",
+          "title": "Why HTTPS matters"
+        },
+        {
+          "url": "https://www.ssh.com/ssh/sftp/",
+          "title": "SSH File Transfer Protocol (SFTP): Get SFTP client & server"
         }
       ],
       "labels": [
         "target=azure-aks",
         "target=azure-container-apps",
+        "target=azure-appservice",
         "capability=containerization",
         "source",
         "domain=cloud-readiness",
-        "category=containerization",
+        "category=remote-communication",
         "containerization",
         "os=windows",
         "os=linux"
-      ]
-    },
-    "connect-01700": {
-      "id": "connect-01700",
-      "description": "",
-      "title": "Embedded library - WSDL",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=WSDL",
-        "tag=Embedded library - WSDL"
-      ]
-    },
-    "discover-java-files": {
-      "id": "discover-java-files",
-      "description": "",
-      "title": "Java source files",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Java Source"
-      ]
-    },
-    "technology-usage-connect-01700": {
-      "id": "technology-usage-connect-01700",
-      "description": "",
-      "title": "WSDL",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Connect=WSDL",
-        "tag=Embedded=WSDL",
-        "tag=Web Service=WSDL"
-      ]
-    },
-    "embedded-cache-15000": {
-      "id": "embedded-cache-15000",
-      "description": "The application embeds the Spring Boot Cache library.\n\nAn embedded cache library is problematic because state information might not be persisted to a backing service.\n\nRecommendation: Use a cache backing service.",
-      "title": "Caching - Spring Boot Cache library",
-      "severity": "mandatory",
-      "effort": 5,
-      "labels": [
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "target=azure-appservice",
-        "source",
-        "domain=cloud-readiness",
-        "category=embedded-cache-management",
-        "os=windows",
-        "os=linux"
-      ]
-    },
-    "technology-usage-web-02400": {
-      "id": "technology-usage-web-02400",
-      "description": "The application uses Eclipse RCP",
-      "title": "Embedded technology - Eclipse RCP",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=View=Eclipse RCP",
-        "tag=Rich=Eclipse RCP",
-        "tag=Embedded=Eclipse RCP"
-      ]
-    },
-    "technology-usage-logging-00030": {
-      "id": "technology-usage-logging-00030",
-      "description": "",
-      "title": "SLF4J",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Logging=SLF4J",
-        "tag=Sustain=SLF4J",
-        "tag=Embedded=SLF4J"
-      ]
-    },
-    "technology-usage-embedded-framework-08500": {
-      "id": "technology-usage-embedded-framework-08500",
-      "description": "",
-      "title": "Spring Boot Cache",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Embedded=Spring Boot Cache",
-        "tag=Store=Spring Boot Cache",
-        "tag=Caching=Spring Boot Cache"
-      ]
-    },
-    "technology-usage-3rd-party-06000": {
-      "id": "technology-usage-3rd-party-06000",
-      "description": "",
-      "title": "Jetty",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Execute=Jetty",
-        "tag=Embedded=Jetty",
-        "tag=3rd party=Jetty"
-      ]
-    },
-    "discover-maven-xml": {
-      "id": "discover-maven-xml",
-      "description": "",
-      "title": "Maven XML file",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Maven XML"
-      ]
-    },
-    "test-frameworks-sauge-00370": {
-      "id": "test-frameworks-sauge-00370",
-      "description": "",
-      "title": "Embedded framework - JUnit",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=JUnit",
-        "tag=Embedded framework - JUnit"
-      ]
-    },
-    "azure-database-postgresql-02000": {
-      "id": "azure-database-postgresql-02000",
-      "description": "To migrate a Java application that uses a PostgreSQL database to Azure, you can follow these recommendations:\n\n * Use a managed **Azure Database for PostgreSQL Flexible Server**: For that create a managed PostgreSQL Flexible Server database in Azure and choose the appropriate pricing tier based on your application's requirements for performance, storage, and availability.\n\n * **Migrate** the existing PostgreSQL database: For that you can use the Azure Database Migration Service (DMS) to perform an online migration with minimal downtime.\n\n * Update the application's **database connection** details: Modify the Java application's configuration to point to the newly provisioned Azure Database for PostgreSQL. Update the connection string, hostname, port, username, and password information accordingly.\n\n * Enable **monitoring and diagnostics**: Utilize Azure Monitor to gain insights into the performance and health of your Java application and the underlying PostgreSQL database. Set up metrics, alerts, and log analytics to proactively identify and resolve issues.\n\n * Implement **security** measures: Apply security best practices to protect your Java application and the PostgreSQL database. This includes implementing authentication and authorization mechanisms with passwordless connections and leveraging Microsoft Defender for Cloud for threat detection and vulnerability assessments.\n\n * **Backup** your data: Azure Database for PostgreSQL provides automated backups by default. You can configure the retention period for backups based on your requirements. You can also enable geo-redundant backups, if needed, to enhance data durability and availability.",
-      "title": "PostgreSQL database found",
-      "severity": "potential",
-      "effort": 3,
-      "links": [
-        {
-          "url": "https://learn.microsoft.com/azure/postgresql/flexible-server",
-          "title": "Azure PostgreSQL Flexible Server documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/dms",
-          "title": "Azure Database Migration Service documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/azure-monitor",
-          "title": "Azure Monitor documentation"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/defender-for-cloud",
-          "title": "Microsoft Defender for Cloud"
-        },
-        {
-          "url": "https://learn.microsoft.com/azure/postgresql/single-server/concepts-backup",
-          "title": "Backup and restore in Azure Database for PostgreSQL"
-        }
-      ],
-      "labels": [
-        "target=azure-appservice",
-        "target=azure-aks",
-        "target=azure-container-apps",
-        "source",
-        "domain=cloud-readiness",
-        "category=database-migration",
-        "database",
-        "postgresql",
-        "os=windows",
-        "os=linux"
-      ]
-    },
-    "embedded-framework-08400": {
-      "id": "embedded-framework-08400",
-      "description": "The application embeds the Spring Web framework.",
-      "title": "Embedded framework - Spring Web",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Spring Web",
-        "tag=Embedded framework - Spring Web"
-      ]
-    },
-    "configuration-management-0100": {
-      "id": "configuration-management-0100",
-      "description": "The application embeds Spring Cloud Config.",
-      "title": "Embedded library - Spring Cloud Config",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Spring Cloud Config"
-      ]
-    },
-    "configuration-management-0400": {
-      "id": "configuration-management-0400",
-      "description": "Spring logging properties detected",
-      "title": "Spring logging properties detected",
-      "severity": "potential",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Spring Properties",
-        "tag=Spring logging properties detected"
-      ]
-    },
-    "observability-0100": {
-      "id": "observability-0100",
-      "description": "",
-      "title": "Embedded library - Spring Boot Actuator",
-      "severity": "information",
-      "effort": 0,
-      "labels": [
-        "discovery",
-        "tag=Spring Boot Actuator",
-        "tag=Embedded library - Spring Boot Actuator"
       ]
     },
     "configuration-management-technology-usage-0200": {
@@ -287428,6 +287133,301 @@
         "category=database-migration",
         "database",
         "microsoft-sql",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "discover-properties-file": {
+      "id": "discover-properties-file",
+      "description": "",
+      "title": "Properties file",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Properties"
+      ]
+    },
+    "localhost-00004": {
+      "id": "localhost-00004",
+      "description": "The app is trying to use localhost, please try to migrate the resource to cloud",
+      "title": "Localhost Usage",
+      "severity": "optional",
+      "effort": 7,
+      "labels": [
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "target=azure-appservice",
+        "capability=containerization",
+        "source",
+        "domain=cloud-readiness",
+        "category=local-resource-access",
+        "localhost",
+        "containerization",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "spring-boot-to-azure-config-server-03000": {
+      "id": "spring-boot-to-azure-config-server-03000",
+      "description": "The application embeds Spring Cloud Config.\n\n If you are migrating to Azure Container Apps, the connection info of Config Server can be injected automatically upon app start.\n Find any explicit configurations of config server connection info:\n\n If configured in **configuration files**: they will be ignored and overrided by Azure Container Apps.\n\n If configured in **command line parameters**, **Java system attribute**, **environment variable**: they need to be removed or you might experience conflicts and unexpected behavior.\n\n Configure the managed Config Server after creating an Azure Container Apps environment.",
+      "title": "Embedded library - Spring Cloud Config",
+      "severity": "potential",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-config-server?tabs=azure-cli",
+          "title": "Connect to a managed Config Server for Spring in Azure Container Apps"
+        }
+      ],
+      "labels": [
+        "source=springboot",
+        "target=azure-appservice",
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "domain=cloud-readiness",
+        "category=spring-migration",
+        "Spring Cloud Config",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "embedded-framework-08200": {
+      "id": "embedded-framework-08200",
+      "description": "The application embeds a Spring DI library.",
+      "title": "Embedded framework - Spring DI",
+      "severity": "potential",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Spring DI",
+        "tag=Embedded framework - Spring DI"
+      ]
+    },
+    "technology-usage-logging-00050": {
+      "id": "technology-usage-logging-00050",
+      "description": "",
+      "title": "Logback",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Sustain=Logback",
+        "tag=Embedded=Logback",
+        "tag=Logging=Logback"
+      ]
+    },
+    "google-gcr-to-azure-acr-01000": {
+      "id": "google-gcr-to-azure-acr-01000",
+      "description": "The application uses Google Container Registry (gcr.io) or Google Artifact Registry ([location]-docker.pkg.dev) for container images.\n\n**Common patterns detected may include:**\n* Container image references in Dockerfiles and docker-compose files\n* Kubernetes manifests (Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, Pods) with GCR images\n* Configuration files referencing GCR endpoints\n\n**To migrate to Azure Container Registry (ACR):**\n* **Provision Azure Container Registry:**\n   * Create an ACR instance: `az acr create --name <registry-name> --resource-group <rg> --sku Standard`\n* **Migrate container images:**\n   * Import images from GCR: `az acr import --name <acr-name> --source gcr.io/<project>/<image>:<tag> --image <image>:<tag>`\n   * Or use docker pull/push: `docker pull gcr.io/<project>/<image>` then `docker push <acr-name>.azurecr.io/<image>`\n* **Update image references:**\n   * Replace `gcr.io/<project>/<image>` with `<acr-name>.azurecr.io/<image>`\n   * Replace `<location>-docker.pkg.dev/<project>/<repo>/<image>` with `<acr-name>.azurecr.io/<image>`\n   * Update all Dockerfiles, docker-compose files, Kubernetes manifests, and Helm charts\n* **Configure authentication:**\n   * **For AKS (recommended):** Enable managed identity integration: `az aks update --name <aks-cluster> --attach-acr <acr-name>`\n   * **For other services:** Use Azure managed identities or service principals\n   * **For local development:** Use `az acr login --name <acr-name>`\n* **Remove GCR-specific tooling:**\n   * Replace gcloud docker authentication with Azure CLI or service principals\n* **For language packages (if using Artifact Registry for npm/Maven/Python):**\n   * Use Azure Artifacts for package management instead of Google Artifact Registry",
+      "title": "Google Container Registry (GCR) or Artifact Registry usage detected",
+      "severity": "mandatory",
+      "effort": 3,
+      "links": [
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/container-registry/",
+          "title": "Azure Container Registry documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images",
+          "title": "Migrate from Google Container Registry to Azure Container Registry"
+        },
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-best-practices",
+          "title": "Azure Container Registry best practices"
+        }
+      ],
+      "labels": [
+        "source=google-gcr",
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "domain=cloud-readiness",
+        "category=container-registry",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "spring-boot-to-azure-eureka-02000": {
+      "id": "spring-boot-to-azure-eureka-02000",
+      "description": "The application embeds the Eureka client. If you are migrating to Azure Container Apps, the connection info of Eureka can be injected upon app start.\n\n Find any explicit configurations of config server connection info:\n\n If configured in **configuration files**: they will be ignored and overrided by Azure Container Apps.\n\n If configured in **command line parameters**, **Java system attribute**, **environment variable**: they need to be removed or you might experience conflicts and unexpected behavior.",
+      "title": "Embedded framework - Eureka Client",
+      "severity": "potential",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-eureka-server?tabs=azure-cli",
+          "title": "Connect to a managed Eureka Server for Spring in Azure Container Apps"
+        },
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-eureka-server-highly-available",
+          "title": "Create a highly available Eureka server component cluster in Azure Container Apps"
+        },
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/container-apps/java-admin-eureka-integration",
+          "title": "Integrate Admin for Spring with Eureka Server for Spring in Azure Container Apps"
+        },
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/developer/java/migration/migrate-spring-cloud-to-azure-container-apps#remove-restricted-configurations",
+          "title": "Remove restricted configurations"
+        }
+      ],
+      "labels": [
+        "target=azure-appservice",
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "source",
+        "domain=cloud-readiness",
+        "category=spring-migration",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "azure-aws-config-credential-01000": {
+      "id": "azure-aws-config-credential-01000",
+      "description": "The application contains AWS credential configuration.\n\n * Migrate credentials to **Azure Key Vault**: Create an Azure Key Vault to securely store your application's credentials and sensitive information. Migrate the AWS credentials to Azure Key Vault, which provides a centralized and highly secure storage solution.\n\n * **Modify application code**: Update the Java application's code to retrieve the required credentials from Azure Key Vault instead of AWS. Use the appropriate Azure SDK or libraries to integrate with Azure Key Vault and fetch the credentials securely during runtime.\n\n * Implement **Azure Active Directory (Azure AD) authentication**: If the AWS credentials are used for authentication purposes, consider migrating to Azure AD for user authentication and authorization. Implement Azure AD authentication in your Java application to ensure secure access to Azure resources.",
+      "title": "AWS credential configuration",
+      "severity": "mandatory",
+      "effort": 3,
+      "links": [
+        {
+          "url": "https://learn.microsoft.com/azure/key-vault",
+          "title": "Azure Key Vault documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/key-vault/secrets/quick-create-java",
+          "title": "Quickstart: Azure Key Vault Secret client library for Java"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/active-directory",
+          "title": "Azure Active Directory documentation"
+        }
+      ],
+      "labels": [
+        "target=azure-appservice",
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "source",
+        "domain=cloud-readiness",
+        "category=credential-migration",
+        "AWS",
+        "os=windows",
+        "os=linux"
+      ]
+    },
+    "non-xml-technology-usage-20000": {
+      "id": "non-xml-technology-usage-20000",
+      "description": "",
+      "title": "Properties",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Embedded=Properties",
+        "tag=Other=Properties",
+        "tag=Sustain=Properties"
+      ]
+    },
+    "embedded-cache-libraries-15000": {
+      "id": "embedded-cache-libraries-15000",
+      "description": "\n                        The application embeds the Spring Boot Cache library.\n                    ",
+      "title": "Spring Boot Cache library",
+      "severity": "potential",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Spring Boot Cache",
+        "tag=Caching - Spring Boot Cache library"
+      ]
+    },
+    "technology-usage-3rd-party-06000": {
+      "id": "technology-usage-3rd-party-06000",
+      "description": "",
+      "title": "Jetty",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Execute=Jetty",
+        "tag=Embedded=Jetty",
+        "tag=3rd party=Jetty"
+      ]
+    },
+    "configuration-management-technology-usage-0100": {
+      "id": "configuration-management-technology-usage-0100",
+      "description": "",
+      "title": "Spring Cloud Config",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Sustain=Spring Cloud Config",
+        "tag=Configuration Management=Spring Cloud Config",
+        "tag=Embedded=Spring Cloud Config"
+      ]
+    },
+    "technology-usage-logging-00030": {
+      "id": "technology-usage-logging-00030",
+      "description": "",
+      "title": "SLF4J",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Logging=SLF4J",
+        "tag=Sustain=SLF4J",
+        "tag=Embedded=SLF4J"
+      ]
+    },
+    "observability-technology-usage-0100": {
+      "id": "observability-technology-usage-0100",
+      "description": "",
+      "title": "Spring Boot Actuator",
+      "severity": "information",
+      "effort": 0,
+      "labels": [
+        "discovery",
+        "tag=Sustain=Spring Boot Actuator",
+        "tag=Observability=Spring Boot Actuator",
+        "tag=Embedded=Spring Boot Actuator"
+      ]
+    },
+    "azure-database-microsoft-mariadb-06000": {
+      "id": "azure-database-microsoft-mariadb-06000",
+      "description": "To migrate a Java application that uses a MariaDB database to Azure, you can follow these recommendations:\n\n * Use a managed **Azure Database for MariaDB**: For that create a managed MariaDB database in Azure and choose the appropriate pricing tier based on your application's requirements for performance, storage, and availability.\n\n * **Migrate** the existing MariaDB database: For that you can use the Azure Database Migration Service (DMS) to perform an online migration with minimal downtime.\n\n * Update the application's **database connection** details: Modify the Java application's configuration to point to the newly provisioned Azure Database for MariaDB. Update the connection string, hostname, port, username, and password information accordingly.\n\n * Enable **monitoring and diagnostics**: Utilize Azure Monitor to gain insights into the performance and health of your Java application and the underlying MariaDB database. Set up metrics, alerts, and log analytics to proactively identify and resolve issues.\n\n * Implement **security** measures: Apply security best practices to protect your Java application and the MariaDB database. This includes implementing authentication and authorization mechanisms with passwordless connections and leveraging Microsoft Defender for Cloud for threat detection and vulnerability assessments.\n\n * **Backup** your data: Azure Database for MariaDB provides automated backups by default. You can configure the retention period for backups based on your requirements. You can also enable geo-redundant backups, if needed, to enhance data durability and availability.",
+      "title": "MariaDB database found",
+      "severity": "potential",
+      "effort": 3,
+      "links": [
+        {
+          "url": "https://learn.microsoft.com/azure/mariadb",
+          "title": "Azure Database for MariaDB documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/dms",
+          "title": "Azure Database Migration Service documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/azure-monitor",
+          "title": "Azure Monitor documentation"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/defender-for-cloud",
+          "title": "Microsoft Defender for Cloud"
+        },
+        {
+          "url": "https://learn.microsoft.com/azure/mariadb/howto-restore-server-portal",
+          "title": "Backup and restore in Azure Database for MariaDB"
+        }
+      ],
+      "labels": [
+        "target=azure-appservice",
+        "target=azure-aks",
+        "target=azure-container-apps",
+        "source",
+        "domain=cloud-readiness",
+        "category=database-migration",
+        "database",
+        "mariadb",
         "os=windows",
         "os=linux"
       ]

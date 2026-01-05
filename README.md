@@ -19,6 +19,16 @@ This sample is an AZD template for a Spring Boot Pet Clinic application split in
 
 Let's jump in and get this up and running in Azure. When you are finished, you will have a fully functional Spring Petclinic application deployed to the cloud. In later steps, you'll see how to setup a pipeline and run the application.
 
+## New: Background Agent System
+
+This application now includes a **Background Agent System** that enables asynchronous task processing with support for:
+- **Multiple concurrent task execution** - Execute multiple background tasks simultaneously using a thread pool
+- **Task delegation** - Delegate tasks to background workers for async processing
+- **Status tracking** - Track task status (PENDING, RUNNING, COMPLETED, FAILED, CANCELLED)
+- **Custom task executors** - Easily implement custom task handlers for different task types
+
+See [Background Agent Implementation Documentation](docs/background-agent-implementation.md) for detailed usage and API reference.
+
 ![Spring Petclinic Application](media/petclinic.jpg)
 
 Before delving into the step-by-step execution of the application, you can simply click the Deploy to Azure button. This will instantly deploy the app to Azure Spring Apps.

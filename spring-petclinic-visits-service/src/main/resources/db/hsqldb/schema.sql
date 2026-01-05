@@ -19,7 +19,7 @@ CREATE TABLE background_tasks (
   started_at TIMESTAMP,
   completed_at TIMESTAMP,
   error_message LONGVARCHAR,
-  retry_count INTEGER NOT NULL DEFAULT 0
+  retry_count INTEGER NOT NULL
 );
 
 CREATE INDEX idx_bg_task_status ON background_tasks (status);

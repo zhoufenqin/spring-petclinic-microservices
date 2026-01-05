@@ -272,6 +272,6 @@ spring-petclinic-microservices/
 
 ## References
 
-- [Azure Spring Apps Documentation](https://docs.microsoft.com/azure/spring-apps/)
+- [Azure Spring Apps Documentation](https://learn.microsoft.com/azure/spring-apps/)
 - [Spring Cloud Documentation](https://spring.io/projects/spring-cloud)
 - [Original Spring PetClinic](https://github.com/spring-petclinic/spring-petclinic-microservices)

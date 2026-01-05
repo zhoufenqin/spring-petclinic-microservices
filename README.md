@@ -71,6 +71,8 @@ The Architecture diagram of the Spring Petclinic Microservices is shown as below
 
 ![Spring Petclinic Microservices architecture](docs/microservices-architecture-diagram.jpg)
 
+For a detailed architectural overview with component descriptions, see the [Architecture Diagram Documentation](docs/architecture-diagram.md).
+
 > This template provisions resources to an Azure subscription that you will select upon provisioning them. Please refer to the [Pricing calculator for Microsoft Azure](https://azure.microsoft.com/pricing/calculator/) and, if needed, update the included Azure resource definitions found in `infra/main.bicep` to suit your needs.
 
 ### Application Code

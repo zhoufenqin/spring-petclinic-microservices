@@ -749,6 +749,16 @@ In this quickstart, you've deployed an existing Spring Boot-based app using AZD.
 This Spring microservices sample is forked from
 [spring-petclinic/spring-petclinic-microservices](https://github.com/spring-petclinic/spring-petclinic-microservices) - see [Petclinic README](./README-petclinic.md).
 
+## GitHub Copilot CLI Integration
+
+This project supports [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli) for streamlined development workflows. You can use Copilot CLI to interact with this repository, create issues, and manage development tasks directly from your terminal.
+
+### Using Copilot CLI with this Project
+
+- Use `gh copilot` commands to get AI-powered assistance
+- Leverage GitHub MCP tools for repository operations
+- Automate common tasks and workflows
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a
